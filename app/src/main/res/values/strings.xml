@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FindYourRPG</string>
+    <string name="login">Login</string>
+    <string name="toast_default">Click</string>
 </resources>
