@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FindYourRPG</string>
+    <string name="login">Login</string>
+    <string name="toast_default">Klik</string>
+    <string name="option_looking">Wyszukaj</string>
+    <string name="option_create">Stworz gre</string>
+    <string name="option_find_player">Wyszukaj</string>
+    <string name="option_profile">Profil</string>
+    <string name="option_logout">Wyloguj</string>
+    <string name="option_library">Centrum wiedzy</string>
+    <string name="password_text">Haslo</string>
+    <string name="login_button">Zaloguj</string>
+</resources>

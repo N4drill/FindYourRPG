@@ -27,7 +27,7 @@ public class LoginFragment extends BaseFragmentCreator {
 
     @Override
     protected void initializeComponents(View view) {
-        mLoginButton = view.findViewById(R.id.button);
+        mLoginButton = view.findViewById(R.id.login_button);
     }
 
     @Override
