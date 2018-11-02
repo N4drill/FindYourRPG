@@ -5,22 +5,20 @@ import android.view.View;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseFragmentCreator;
 
-public class MainMenuFragment extends BaseFragmentCreator {
+public class LookingForGameFragment extends BaseFragmentCreator {
 
     @Override
     protected int getFragmentLayoutId() {
-        return R.layout.fragment_mainmenu;
+        return R.layout.fragment_looking_for_game;
     }
 
     @Override
     protected void initializeComponents(View view) {
-        //Add references to layout components..
-        //For example
-        //mButton = view.findViewById(R.id.id);
+
     }
 
     @Override
     protected void setOnClickListeners() {
-        //Add listeners for each component that need it
+
     }
 }

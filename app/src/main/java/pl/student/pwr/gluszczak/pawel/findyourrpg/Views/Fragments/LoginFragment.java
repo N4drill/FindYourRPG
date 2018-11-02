@@ -14,37 +14,27 @@ import android.widget.Toast;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.MainScreenActivity;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseFragmentCreator;
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends BaseFragmentCreator {
 
-    private Button mButton;
+    private Button mLoginButton;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getFragmentLayoutId() {
+        return R.layout.fragment_login;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
-
-        initializeComponents(view);
-        setUpListeners();
-
-        return view;
+    protected void initializeComponents(View view) {
+        mLoginButton = view.findViewById(R.id.button);
     }
 
-    private void initializeComponents(View view) {
-        mButton = view.findViewById(R.id.button);
-    }
-
-
-    private void setUpListeners() {
-        mButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    protected void setOnClickListeners() {
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastMaker.defaultTestToast(getActivity());
                 Intent intent = new Intent(getActivity(), MainScreenActivity.class);
                 startActivity(intent);
             }
