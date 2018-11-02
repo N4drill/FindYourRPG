@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.MainScreenActivity;
 
 public class LoginFragment extends Fragment {
 
@@ -44,6 +45,8 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ToastMaker.defaultTestToast(getActivity());
+                Intent intent = new Intent(getActivity(), MainScreenActivity.class);
+                startActivity(intent);
             }
         });
     }

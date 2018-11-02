@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/nav_looking"
+            android:title="@string/option_looking"
+            android:icon="@drawable/ic_placeholder" />
+        <item
+            android:id="@+id/nav_create"
+            android:title="@string/option_create"
+            android:icon="@drawable/ic_placeholder" />
+        <item
+            android:id="@+id/nav_players"
+            android:title="@string/option_find_player"
+            android:icon="@drawable/ic_placeholder" />
+        <item
+            android:id="@+id/nav_library"
+            android:title="@string/option_library"
+            android:icon="@drawable/ic_placeholder" />
+    </group>
+
+    <item android:title="User">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/nav_profile"
+                    android:title="@string/option_profile"
+                    android:icon="@drawable/ic_placeholder" />
+                <item
+                    android:id="@+id/nav_logout"
+                    android:title="@string/option_logout"
+                    android:icon="@drawable/ic_placeholder" />
+            </group>
+        </menu>
+
+    </item>
+
+</menu>
