@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.FragmentHelper;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.CreatingGameFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LibraryFragment;
@@ -110,19 +111,7 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
                 fragmentClassFile = MainMenuFragment.class;
         }
 
-        //Logout Option selected
-        if (fragmentClassFile == null) {
-            return null;
-        }
-
-        try {
-            return (Fragment) fragmentClassFile.newInstance();
-        } catch (Exception e) {
-            Log.d(LOG_TAG_FRAGMENT_SWAP, "Failed to fetch Fragment");
-            e.printStackTrace();
-        }
-
-        return null;
+        return FragmentHelper.generateFragmentBasedOnClassName(fragmentClassFile);
     }
 
 
@@ -141,5 +130,10 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
 
+        Class fragmentName = MainMenuFragment.class;
+        replaceFragment(FragmentHelper.generateFragmentBasedOnClassName(fragmentName));
+    }
 }
