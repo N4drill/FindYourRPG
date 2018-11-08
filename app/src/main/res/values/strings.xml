@@ -18,6 +18,7 @@
     <string name="lorem_ipsum_medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequat dui at vestibulum. Sed ut nisi vitae mi pellentesque mollis at id leo. Morbi purus quam, interdum id risus id, porttitor ornare enim. Fusce consequat vulputate pellentesque.</string>
     <string name="lorem_ipsum_long">
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequat dui at vestibulum. Sed ut nisi vitae mi pellentesque mollis at id leo. Morbi purus quam, interdum id risus id, porttitor ornare enim. Fusce consequat vulputate pellentesque. Ut risus libero, malesuada ut feugiat eget, lobortis ut odio. Etiam elit ante, ullamcorper sed sollicitudin eu, convallis at ex. Ut pretium lacus quam, ut scelerisque nisl accumsan vitae.</string>
+    <string name="collection_users">Users</string>
 
 
 </resources>

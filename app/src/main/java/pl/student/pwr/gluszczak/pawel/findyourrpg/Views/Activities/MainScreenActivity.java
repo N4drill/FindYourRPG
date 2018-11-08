@@ -1,5 +1,6 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.MenuItem;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.FragmentHelper;
@@ -23,6 +26,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.SinglePageActi
 
 public class MainScreenActivity extends SinglePageActivityWithNav {
 
+    private static final String TAG = "MainScreenActivity";
 
     private static final String LOG_TAG_FRAGMENT_SWAP = "MainScreenActivity";
 
@@ -61,8 +65,24 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
 
     private void updateFragmentBasedOnOptionSelect(MenuItem menuItem) {
         Fragment chosenFragment = chooseFragment(menuItem);
-        replaceFragment(chosenFragment);
-        updateNavigation(menuItem);
+
+        //Case when user clicked on Logout...
+        if (chosenFragment == null) {
+            signOut();
+        }
+        //Otherwise..
+        else {
+            replaceFragment(chosenFragment);
+            updateNavigation(menuItem);
+        }
+    }
+
+    private void signOut() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void updateNavigation(MenuItem menuItem) {
@@ -85,31 +105,25 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
         switch (menuItem.getItemId()) {
             case R.id.nav_create:
                 fragmentClassFile = CreatingGameFragment.class;
-                ToastMaker.shortToast(this, "Create");
                 break;
             case R.id.nav_looking:
                 fragmentClassFile = LookingForGameFragment.class;
-                ToastMaker.shortToast(this, "LFG");
                 break;
             case R.id.nav_players:
                 fragmentClassFile = LookingForPlayersFragment.class;
-                ToastMaker.shortToast(this, "Players");
                 break;
             case R.id.nav_library:
                 fragmentClassFile = LibraryFragment.class;
-                ToastMaker.shortToast(this, "Library");
                 break;
             case R.id.nav_profile:
                 fragmentClassFile = LibraryFragment.class;
-                ToastMaker.shortToast(this, "Profile");
                 break;
             case R.id.nav_logout:
-                fragmentClassFile = MainMenuFragment.class;
-                ToastMaker.shortToast(this, "Logout");
-                break;
+                return null;
             default:
                 fragmentClassFile = MainMenuFragment.class;
         }
+
 
         return FragmentHelper.generateFragmentBasedOnClassName(fragmentClassFile);
     }
