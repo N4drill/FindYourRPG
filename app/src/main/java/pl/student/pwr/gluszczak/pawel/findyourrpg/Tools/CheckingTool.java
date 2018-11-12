@@ -13,4 +13,16 @@ public class CheckingTool {
         return string.equals("");
     }
 
+
+    /**
+     * Return true if string are both same
+     *
+     * @param string1
+     * @param string2
+     * @return
+     */
+    public static boolean doesStringMatch(String string1, String string2) {
+        return string1.equals(string2);
+    }
+
 }

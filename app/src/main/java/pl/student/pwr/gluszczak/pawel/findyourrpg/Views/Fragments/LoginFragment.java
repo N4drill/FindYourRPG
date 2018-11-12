@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -31,6 +32,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.MainScreenActivity;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.RegisterActivity;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseFragmentCreator;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isEmpty;
@@ -41,7 +43,7 @@ public class LoginFragment extends BaseFragmentCreator {
     private static final String TAG = "LoginFragment";
 
     //Views
-    private Button mLoginButton;
+    private Button mLoginButton, mRegisterButton;
     private EditText mLoginInput, mPasswordInput;
     private ProgressBar mProgressBar;
 
@@ -52,6 +54,7 @@ public class LoginFragment extends BaseFragmentCreator {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        hideSoftKeyboard();
 
         setupFirebaseAuth();
 
@@ -128,6 +131,7 @@ public class LoginFragment extends BaseFragmentCreator {
         mLoginInput = view.findViewById(R.id.login_login_input);
         mPasswordInput = view.findViewById(R.id.login_password_input);
         mProgressBar = view.findViewById(R.id.login_progressBar);
+        mRegisterButton = view.findViewById(R.id.login_register_button);
     }
 
     @Override
@@ -136,6 +140,13 @@ public class LoginFragment extends BaseFragmentCreator {
             @Override
             public void onClick(View v) {
                 singIn();
+            }
+        });
+        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Trying to redirect to register");
+                redirectToRegister();
             }
         });
     }
@@ -161,10 +172,18 @@ public class LoginFragment extends BaseFragmentCreator {
                             hideProgressBar();
                         }
                     });
+            //Fields with inputs ARE empty
         } else {
             ToastMaker.shortToast(getActivity(), "Fill all fields!");
             hideProgressBar();
         }
+    }
+
+    private void redirectToRegister() {
+        Intent intent = new Intent(getActivity(), RegisterActivity.class);
+        Log.d(TAG, "redirectToRegister: Redirected");
+        startActivity(intent);
+        getActivity().finish();
     }
 
 
@@ -173,8 +192,12 @@ public class LoginFragment extends BaseFragmentCreator {
     }
 
     private void hideProgressBar() {
-        if (mProgressBar.getVisibility() == View.INVISIBLE) {
+        if (mProgressBar.getVisibility() == View.VISIBLE) {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void hideSoftKeyboard() {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 }

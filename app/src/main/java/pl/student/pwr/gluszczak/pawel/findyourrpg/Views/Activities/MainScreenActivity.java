@@ -22,6 +22,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LibraryFragmen
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LookingForGameFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LookingForPlayersFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.MainMenuFragment;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.ProfileFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.SinglePageActivityWithNav;
 
 public class MainScreenActivity extends SinglePageActivityWithNav {
@@ -116,7 +117,7 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
                 fragmentClassFile = LibraryFragment.class;
                 break;
             case R.id.nav_profile:
-                fragmentClassFile = LibraryFragment.class;
+                fragmentClassFile = ProfileFragment.class;
                 break;
             case R.id.nav_logout:
                 return null;

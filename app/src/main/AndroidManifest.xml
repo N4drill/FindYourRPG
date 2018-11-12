@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Views.Activities.MainScreenActivity" />
+        <activity android:name=".Views.Activities.RegisterActivity" />
     </application>
 
 </manifest>
