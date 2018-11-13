@@ -1,4 +1,7 @@
 <resources>
+    <!-- Google maps API key  -->
+    <string name="google_map_api_key">AIzaSyAQqlJjDrGj8h4Gggid1UXDPPc9FqbBVs0</string>
+
     <string name="app_name">FindYourRPG</string>
     <string name="login">Login</string>
     <string name="toast_default">Click</string>
