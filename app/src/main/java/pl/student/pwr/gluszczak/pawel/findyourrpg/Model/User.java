@@ -5,42 +5,59 @@ import android.os.Parcelable;
 
 public class User implements Parcelable {
 
-    private String mEmail;
-    private String mId;
-    private String mUsername;
+    private String email;
+    private String id;
+    private String username;
 
     public User(String email, String id, String username) {
-        mEmail = email;
-        mId = id;
-        mUsername = username;
+        this.email = email;
+        this.id = id;
+        this.username = username;
     }
 
     public User() {
     }
 
+    protected User(Parcel in) {
+        email = in.readString();
+        id = in.readString();
+        username = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getEmail() {
-        return mEmail;
+        return email;
     }
 
     public void setEmail(String email) {
-        mEmail = email;
+        this.email = email;
     }
 
     public String getId() {
-        return mId;
+        return id;
     }
 
     public void setId(String id) {
-        mId = id;
+        this.id = id;
     }
 
     public String getUsername() {
-        return mUsername;
+        return username;
     }
 
     public void setUsername(String username) {
-        mUsername = username;
+        this.username = username;
     }
 
 
@@ -51,8 +68,10 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mEmail);
-        dest.writeString(mId);
-        dest.writeString(mUsername);
+        dest.writeString(email);
+        dest.writeString(id);
+        dest.writeString(username);
     }
+
+
 }
