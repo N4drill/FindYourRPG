@@ -1,17 +1,28 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
@@ -25,16 +36,17 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.MainMenuFragme
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.ProfileFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.SinglePageActivityWithNav;
 
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.ERROR_DIALOG_REQUEST;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
+
 public class MainScreenActivity extends SinglePageActivityWithNav {
 
     private static final String TAG = "MainScreenActivity";
 
-    private static final String LOG_TAG_FRAGMENT_SWAP = "MainScreenActivity";
 
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    private ActionBarDrawerToggle mDrawerToggle;
-
+    //vals
+    private boolean mLocationPermissionGranted = false;
 
     @Override
     protected Fragment createFragment() {
@@ -42,113 +54,126 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
     }
 
     @Override
-    protected void initializeNavigation() {
-        mDrawerLayout = findViewById(R.id.navigation_drawer);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mNavigationView = findViewById(R.id.navigation_navigation);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        setNavigationListener(mNavigationView);
     }
 
-    private void setNavigationListener(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                        updateFragmentBasedOnOptionSelect(menuItem);
-                        return true;
+    private boolean checkMapServices() {
+        if (isServicesOK()) {
+            return isMapsEnabled();
+        }
+        return false;
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("This application requires GPS to work properly, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        Intent enableGpsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(enableGpsIntent, PERMISSIONS_REQUEST_ENABLE_GPS);
                     }
-                }
-        );
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
-    private void updateFragmentBasedOnOptionSelect(MenuItem menuItem) {
-        Fragment chosenFragment = chooseFragment(menuItem);
+    public boolean isMapsEnabled() {
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        //Case when user clicked on Logout...
-        if (chosenFragment == null) {
-            signOut();
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+            return false;
         }
-        //Otherwise..
-        else {
-            replaceFragment(chosenFragment);
-            updateNavigation(menuItem);
-        }
+        return true;
     }
 
-    private void signOut() {
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
-    private void updateNavigation(MenuItem menuItem) {
-        menuItem.setChecked(true);
-        setTitle(menuItem.getTitle());
-        mDrawerLayout.closeDrawers();
-    }
-
-    private void replaceFragment(Fragment fragment) {
-        if (fragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_container, fragment)
-                    .commit();
+    private void getLocationPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
 
-    private Fragment chooseFragment(MenuItem menuItem) {
-        Class fragmentClassFile;
-        switch (menuItem.getItemId()) {
-            case R.id.nav_create:
-                fragmentClassFile = CreatingGameFragment.class;
-                break;
-            case R.id.nav_looking:
-                fragmentClassFile = LookingForGameFragment.class;
-                break;
-            case R.id.nav_players:
-                fragmentClassFile = LookingForPlayersFragment.class;
-                break;
-            case R.id.nav_library:
-                fragmentClassFile = LibraryFragment.class;
-                break;
-            case R.id.nav_profile:
-                fragmentClassFile = ProfileFragment.class;
-                break;
-            case R.id.nav_logout:
-                return null;
-            default:
-                fragmentClassFile = MainMenuFragment.class;
-        }
+    public boolean isServicesOK() {
+        Log.d(TAG, "isServicesOK: checking google services version");
 
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MainScreenActivity.this);
 
-        return FragmentHelper.generateFragmentBasedOnClassName(fragmentClassFile);
-    }
-
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (available == ConnectionResult.SUCCESS) {
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isServicesOK: Google Play Services is working");
             return true;
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
+            //an error occured but we can resolve it
+            Log.d(TAG, "isServicesOK: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MainScreenActivity.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        } else {
+            ToastMaker.shortToast(this, "You can't make map requests");
         }
-
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override
-    public void onBackPressed() {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        mLocationPermissionGranted = false;
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true;
+                }
+            }
+        }
+    }
 
-        Class fragmentName = MainMenuFragment.class;
-        replaceFragment(FragmentHelper.generateFragmentBasedOnClassName(fragmentName));
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: called.");
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ENABLE_GPS: {
+                if (mLocationPermissionGranted) {
+
+                } else {
+                    getLocationPermission();
+                }
+            }
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (checkMapServices()) {
+            if (mLocationPermissionGranted) {
+                Log.d(TAG, "onResume: Done everything");
+            }
+            {
+                getLocationPermission();
+            }
+        }
     }
 }
