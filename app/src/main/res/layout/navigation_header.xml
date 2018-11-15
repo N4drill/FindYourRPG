@@ -7,7 +7,7 @@
 
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_image"
+        android:id="@+id/nav_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginTop="20dp"
@@ -19,10 +19,11 @@
         android:text="Button" />
 
     <TextView
+        android:id="@+id/nav_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_image"
-        android:layout_alignStart="@+id/profile_image"
+        android:layout_below="@+id/nav_image"
+        android:layout_alignStart="@+id/nav_image"
         android:layout_marginTop="8dp"
         android:background="@drawable/shape_name_border"
         android:textSize="18sp"

@@ -19,13 +19,24 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.FragmentHelper;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.CreatingGameFragment;
@@ -44,7 +55,6 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
 
     private static final String TAG = "MainScreenActivity";
 
-
     //vals
     private boolean mLocationPermissionGranted = false;
 
@@ -56,6 +66,54 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        attachUserClient();
+    }
+
+
+    private void attachUserClient() {
+        FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        DocumentReference userReference = mDatabase
+                .collection(getString(R.string.collection_users))
+                .document(currentUser.getUid());
+
+        userReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    User user = task.getResult().toObject(User.class);
+                    ((UserClient) (getApplicationContext())).setUser(user);
+                    Log.d(TAG, "onComplete: Successfully updated UserClient:");
+                    Log.d(TAG, "onComplete: UserClient, username:" + user.getUsername());
+                    Log.d(TAG, "onComplete: UserClient, email:" + user.getEmail());
+                    Log.d(TAG, "onComplete: UserClient, uid:" + user.getId());
+                    updateNavHeader();
+                } else {
+                    Log.d(TAG, "onComplete: failed");
+                }
+            }
+        });
+
+
+    }
+
+    private void updateNavHeader() {
+        CircleImageView mNavImage = findViewById(R.id.nav_image);
+        TextView mNavName = findViewById(R.id.nav_name);
+
+        User user;
+        user = ((UserClient) (getApplicationContext())).getUser();
+        if (user != null) {
+            //Setup nav image
+
+            //Setup nav name
+            mNavName.setText(user.getUsername());
+            Log.d(TAG, "updateNavHeader: Successfully updated navHead");
+        } else {
+            Log.d(TAG, "updateNavHeader: Something went wrong with fetching UserClient");
+        }
 
     }
 

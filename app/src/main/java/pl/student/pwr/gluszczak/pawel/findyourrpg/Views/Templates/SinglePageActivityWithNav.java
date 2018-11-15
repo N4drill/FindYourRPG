@@ -10,11 +10,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.FragmentHelper;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.LoginActivity;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.CreatingGameFragment;
@@ -28,10 +39,9 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
 
     protected abstract Fragment createFragment();
 
-    private static final String TAG = "MainScreenActivity";
+    private static final String TAG = "SinglePageActivityWithN";
 
-    private static final String LOG_TAG_FRAGMENT_SWAP = "MainScreenActivity";
-
+    //Drawer
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -54,6 +64,7 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
                     .commit();
         }
     }
+
 
     protected void initializeNavigation() {
         mDrawerLayout = findViewById(R.id.navigation_drawer);

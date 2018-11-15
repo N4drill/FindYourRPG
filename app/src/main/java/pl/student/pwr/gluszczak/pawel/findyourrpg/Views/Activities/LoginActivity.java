@@ -2,14 +2,8 @@ package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,24 +15,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LoginFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseActivityCreator;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.SinglePageActivity;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isEmpty;
 
 public class LoginActivity extends BaseActivityCreator {
 
-    private static final String TAG = "LoginFragment";
+    private static final String TAG = "LoginActivity";
 
     //Views
     private Button mLoginButton, mRegisterButton;
@@ -59,26 +45,26 @@ public class LoginActivity extends BaseActivityCreator {
                     Log.d(TAG, "onAuthStateChanged: signed as: " + user.getUid());
                     ToastMaker.shortToast(LoginActivity.this, "Logged as: " + user.getEmail());
 
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                            .setTimestampsInSnapshotsEnabled(true)
-                            .build();
-
-                    db.setFirestoreSettings(settings);
-
-                    DocumentReference userRef = db.collection(getString(R.string.collection_users))
-                            .document(user.getUid());
-
-                    userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "onComplete: successfully set the user client.");
-                                User user = task.getResult().toObject(User.class);
-                                ((UserClient) (getApplicationContext())).setUser(user);
-                            }
-                        }
-                    });
+//                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+//                    FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+//                            .setTimestampsInSnapshotsEnabled(true)
+//                            .build();
+//
+//                    db.setFirestoreSettings(settings);
+//
+//                    DocumentReference userRef = db.collection(getString(R.string.collection_users))
+//                            .document(user.getUid());
+//
+//                    userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                            if (task.isSuccessful()) {
+//                                Log.d(TAG, "onComplete: successfully set the user client.");
+//                                User user = task.getResult().toObject(User.class);
+//                                ((UserClient) (getApplicationContext())).setUser(user);
+//                            }
+//                        }
+//                    });
 
                     Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

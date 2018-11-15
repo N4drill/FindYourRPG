@@ -25,4 +25,19 @@ public class CheckingTool {
         return string1.equals(string2);
     }
 
+    /**
+     * Return true if input String contains number
+     *
+     * @param input
+     * @return
+     */
+    public static boolean isStringNumber(String input) {
+        try {
+            int age = Integer.parseInt(input);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
 }

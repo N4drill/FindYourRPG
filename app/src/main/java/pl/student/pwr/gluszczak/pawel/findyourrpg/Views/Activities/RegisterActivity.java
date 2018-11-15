@@ -3,7 +3,6 @@ package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,19 +21,18 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.RegisterFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseActivityCreator;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.SinglePageActivity;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.doesStringMatch;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isEmpty;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isStringNumber;
 
 public class RegisterActivity extends BaseActivityCreator {
 
-    private static final String TAG = "RegisterFragment";
+    private static final String TAG = "RegisterActivity";
 
     //Views
-    EditText mEmailInput, mNickInput, mPasswordInput, mSecondPasswordInput;
+    EditText mEmailInput, mNickInput, mAgeInput, mPasswordInput, mSecondPasswordInput;
     ProgressBar mProgressBar;
     Button mButton;
 
@@ -55,6 +53,7 @@ public class RegisterActivity extends BaseActivityCreator {
         mNickInput = findViewById(R.id.register_nick_input);
         mButton = findViewById(R.id.register_button);
         mProgressBar = findViewById(R.id.register_progressBar);
+        mAgeInput = findViewById(R.id.register_age_input);
 
         mDatabase = FirebaseFirestore.getInstance();
     }
@@ -66,16 +65,20 @@ public class RegisterActivity extends BaseActivityCreator {
             public void onClick(View v) {
                 hideSoftKeyboard();
                 if (areFieldsNotEmpty()) {
-                    if (doesPasswordsMatch()) {
-
-                        registerNewEmail(mEmailInput.getText().toString(), mPasswordInput.getText().toString(), mNickInput.getText().toString());
-
-                    } else {
-                        ToastMaker.shortToast(RegisterActivity.this, "Passwords does not match");
-                        mSecondPasswordInput.setText("");
+                    Log.d(TAG, "onClick: Fields are not empty");
+                    if (isStringNumber(mAgeInput.getText().toString())) {
+                        Log.d(TAG, "onClick: Age is number");
+                        if (doesPasswordsMatch()) {
+                            Log.d(TAG, "onClick: Passwords match");
+                            registerNewEmail(mEmailInput.getText().toString(), mPasswordInput.getText().toString(), mNickInput.getText().toString(), mAgeInput.getText().toString());
+                        } else {
+                            Log.d(TAG, "onClick: Passwords don't match");
+                            ToastMaker.shortToast(RegisterActivity.this, "Passwords does not match");
+                            mSecondPasswordInput.setText("");
+                        }
                     }
-
                 } else {
+                    Log.d(TAG, "onClick: There are some empty fields");
                     ToastMaker.shortToast(RegisterActivity.this, "You must fill all inputs to register account");
                 }
             }
@@ -90,10 +93,11 @@ public class RegisterActivity extends BaseActivityCreator {
         return !isEmpty(mEmailInput.getText().toString())
                 && !isEmpty(mNickInput.getText().toString())
                 && !isEmpty(mPasswordInput.getText().toString())
-                && !isEmpty(mSecondPasswordInput.getText().toString());
+                && !isEmpty(mSecondPasswordInput.getText().toString())
+                && !isEmpty(mAgeInput.getText().toString());
     }
 
-    public void registerNewEmail(final String email, String password, final String nickname) {
+    public void registerNewEmail(final String email, String password, final String nickname, final String age) {
         showProgressBar();
 
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
@@ -106,10 +110,7 @@ public class RegisterActivity extends BaseActivityCreator {
                             Log.d(TAG, "onComplete: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                             //Insert default user data;
-                            User user = new User();
-                            user.setUsername(nickname);
-                            user.setEmail(email);
-                            user.setId(FirebaseAuth.getInstance().getUid());
+                            User user = createNewUser(nickname, email, FirebaseAuth.getInstance().getUid(), age);
 
                             FirebaseFirestoreSettings setting = new FirebaseFirestoreSettings.Builder()
                                     .setTimestampsInSnapshotsEnabled(true)
@@ -126,7 +127,7 @@ public class RegisterActivity extends BaseActivityCreator {
                                     hideProgressBar();
 
                                     if (task.isSuccessful()) {
-                                        succesfullRegistration();
+                                        successfulRegistration();
                                     } else {
                                         View parentLayout = RegisterActivity.this.findViewById(android.R.id.content);
                                         Snackbar.make(parentLayout, "Ups, something went wrong", Snackbar.LENGTH_SHORT).show();
@@ -138,8 +139,21 @@ public class RegisterActivity extends BaseActivityCreator {
                 });
     }
 
-    private void succesfullRegistration() {
-        Log.d(TAG, "succesfullRegistration: Redirecting to LoginActivity");
+
+    private User createNewUser(String nickname, String email, String uid, String age) {
+        int ageint = Integer.parseInt(age);
+
+        User user = new User();
+        user.setUsername(nickname);
+        user.setEmail(email);
+        user.setId(uid);
+        user.setAge(ageint);
+        return user;
+    }
+
+
+    private void successfulRegistration() {
+        Log.d(TAG, "successfulRegistration: Redirecting to LoginActivity");
 
         ToastMaker.shortToast(RegisterActivity.this, "Succesfully registered!");
 
