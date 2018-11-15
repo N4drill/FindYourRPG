@@ -1,6 +1,6 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Tools;
 
-public class CheckingTool {
+abstract public class CheckingTool {
 
     /**
      * Retruns true if string is empty
@@ -38,6 +38,28 @@ public class CheckingTool {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Primitive check if input String is email
+     *
+     * @param string
+     * @return
+     */
+    public static boolean isStringEmail(String string) {
+        return string.contains("@");
+    }
+
+    /**
+     * Return true if value is in bounds with > low && < high
+     *
+     * @param low
+     * @param high
+     * @param value
+     * @return
+     */
+    public static boolean isIntInBounds(int low, int high, int value) {
+        return value > low && value < high;
     }
 
 }

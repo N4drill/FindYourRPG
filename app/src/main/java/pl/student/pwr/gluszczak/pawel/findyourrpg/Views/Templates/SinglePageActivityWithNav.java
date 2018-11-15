@@ -52,6 +52,8 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainscreen);
 
+        updateUserClientIfNeeded();
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
 
@@ -174,6 +176,34 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
 
         Class fragmentName = MainMenuFragment.class;
         replaceFragment(FragmentHelper.generateFragmentBasedOnClassName(fragmentName));
+    }
+
+    private void updateUserClientIfNeeded() {
+        Log.d(TAG, "updateUserClient: Checking UserClient");
+
+        if (((UserClient) (getApplicationContext())).getUser() == null) {
+            Log.d(TAG, "updateUserClientIfNeeded: Need to update UserClient, doing so");
+            FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            DocumentReference userReference = mDatabase
+                    .collection(getString(R.string.collection_users))
+                    .document(currentUser.getUid());
+
+            userReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        User user = task.getResult().toObject(User.class);
+                        ((UserClient) (getApplicationContext())).setUser(user);
+                        Log.d(TAG, "onComplete: Successful update UserClient");
+                    } else {
+                        Log.d(TAG, "onComplete: FAILED to update UserClient");
+                    }
+                }
+            });
+        }
     }
 
 }

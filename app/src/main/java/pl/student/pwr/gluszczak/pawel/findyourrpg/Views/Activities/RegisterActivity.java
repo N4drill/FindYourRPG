@@ -25,6 +25,8 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseActivityCr
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.doesStringMatch;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isEmpty;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isIntInBounds;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isStringEmail;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isStringNumber;
 
 public class RegisterActivity extends BaseActivityCreator {
@@ -68,13 +70,22 @@ public class RegisterActivity extends BaseActivityCreator {
                     Log.d(TAG, "onClick: Fields are not empty");
                     if (isStringNumber(mAgeInput.getText().toString())) {
                         Log.d(TAG, "onClick: Age is number");
-                        if (doesPasswordsMatch()) {
-                            Log.d(TAG, "onClick: Passwords match");
-                            registerNewEmail(mEmailInput.getText().toString(), mPasswordInput.getText().toString(), mNickInput.getText().toString(), mAgeInput.getText().toString());
+                        int age = Integer.parseInt(mAgeInput.getText().toString());
+                        if (isIntInBounds(0, 100, age)) {
+                            Log.d(TAG, "onClick: Age is in bounds");
+                            if (isStringEmail(mEmailInput.getText().toString())) {
+                                Log.d(TAG, "onClick: EmailInput is EmailType");
+                                if (doesPasswordsMatch()) {
+                                    Log.d(TAG, "onClick: Passwords match");
+                                    registerNewEmail(mEmailInput.getText().toString(), mPasswordInput.getText().toString(), mNickInput.getText().toString(), mAgeInput.getText().toString());
+                                } else {
+                                    Log.d(TAG, "onClick: Passwords don't match");
+                                    ToastMaker.shortToast(RegisterActivity.this, "Passwords does not match");
+                                    mSecondPasswordInput.setText("");
+                                }
+                            }
                         } else {
-                            Log.d(TAG, "onClick: Passwords don't match");
-                            ToastMaker.shortToast(RegisterActivity.this, "Passwords does not match");
-                            mSecondPasswordInput.setText("");
+                            ToastMaker.shortToast(RegisterActivity.this, "Age must be between 0 and 100");
                         }
                     }
                 } else {
@@ -148,6 +159,7 @@ public class RegisterActivity extends BaseActivityCreator {
         user.setEmail(email);
         user.setId(uid);
         user.setAge(ageint);
+        user.setFavouriteSystem(getString(R.string.system_default));
         return user;
     }
 

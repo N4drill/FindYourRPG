@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:background="@drawable/default_background">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -45,6 +46,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="16dp"
                     android:text="Name and surname"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/profile_statisctic_default_text_size"
                     android:textStyle="bold" />
 
@@ -53,20 +55,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/profile_name"
-                    android:layout_toLeftOf="@id/profile_age"
+                    android:layout_toLeftOf="@id/profile_player_age"
                     android:layout_marginTop="8dp"
                     android:layout_marginRight="5dp"
                     android:text="Age:"
+                    android:textColor="@color/white"
+
                     android:textStyle="italic|bold" />
 
                 <TextView
-                    android:id="@+id/profile_age"
+                    android:id="@+id/profile_player_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/profile_name"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="8dp"
                     android:text="16"
+                    android:textColor="@color/white"
                     android:textStyle="italic" />
 
                 <TextView
@@ -78,13 +83,14 @@
                     android:layout_alignTop="@id/profile_overall_rating"
                     android:gravity="center"
                     android:layout_alignBottom="@id/profile_overall_rating"
+                    android:textColor="@color/white"
                     android:textStyle="italic|bold" />
 
                 <RatingBar
                     android:id="@+id/profile_overall_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/profile_age"
+                    android:layout_below="@id/profile_player_age"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
 
@@ -114,6 +120,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:text="Games played: "
+                android:textColor="@color/white"
                 android:textSize="@dimen/profile_statisctic_default_text_size" />
 
             <TextView
@@ -124,6 +131,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="8dp"
                 android:text="32"
+                android:textColor="@color/white"
                 android:textSize="@dimen/profile_statisctic_default_text_size" />
 
             <TextView
@@ -134,16 +142,24 @@
                 android:layout_alignStart="@id/profile_games_played"
                 android:layout_marginTop="8dp"
                 android:text="Favourite system:"
+                android:textColor="@color/white"
                 android:textSize="@dimen/profile_statisctic_default_text_size" />
 
             <TextView
                 android:id="@+id/profile_fav_system_value"
-                android:layout_width="wrap_content"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/profile_fav_system"
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="8dp"
-                android:text="DnD"
+                android:textColor="@color/white"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:singleLine="true"
+                android:scrollHorizontally="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:text="@string/system_dnd"
                 android:textSize="@dimen/profile_statisctic_default_text_size" />
 
             <LinearLayout
@@ -152,6 +168,7 @@
                 android:layout_below="@id/profile_fav_system"
                 android:layout_margin="8dp"
                 android:orientation="horizontal"
+                android:textColor="@color/white"
                 android:weightSum="1"
                 android:baselineAligned="false">
 
@@ -175,6 +192,7 @@
                             android:gravity="center"
                             android:text="Player"
                             android:textSize="18sp"
+                            android:textColor="@color/white"
                             android:textStyle="italic|bold" />
                     </android.support.v7.widget.CardView>
 
@@ -196,6 +214,7 @@
                         android:layout_below="@+id/profile_rank_rating"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
+                        android:textColor="@color/white"
                         android:text="Creativity:"
                         android:textSize="@dimen/profile_stats_value_default" />
 
@@ -206,6 +225,7 @@
                         android:layout_alignTop="@id/profile_rank_1"
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="8dp"
+                        android:textColor="@color/white"
                         android:text="4.7"
                         android:textSize="@dimen/profile_stats_value_default" />
 
@@ -217,6 +237,7 @@
                         android:layout_below="@+id/profile_rank_1"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
+                        android:textColor="@color/white"
                         android:text="Behaviour:"
                         android:textSize="@dimen/profile_stats_value_default" />
 
@@ -227,6 +248,7 @@
                         android:layout_alignTop="@id/profile_rank_2"
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="8dp"
+                        android:textColor="@color/white"
                         android:text="5.0"
                         android:textSize="@dimen/profile_stats_value_default" />
 
@@ -234,6 +256,7 @@
                         android:id="@+id/profile_rank_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/white"
                         android:layout_below="@+id/profile_rank_2"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
@@ -244,6 +267,7 @@
                         android:id="@+id/profile_rank_3_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/white"
                         android:layout_alignTop="@id/profile_rank_3"
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="8dp"
@@ -272,6 +296,7 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:text="Game master"
+                            android:textColor="@color/white"
                             android:textSize="18sp"
                             android:textStyle="italic|bold" />
                     </android.support.v7.widget.CardView>
@@ -292,6 +317,7 @@
                         android:id="@+id/profile_rank_1_master"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/white"
                         android:layout_below="@+id/profile_rank_rating_master"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
@@ -305,6 +331,7 @@
                         android:layout_alignTop="@id/profile_rank_1_master"
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="8dp"
+                        android:textColor="@color/white"
                         android:text="4.7"
                         android:textSize="@dimen/profile_stats_value_default" />
 
@@ -314,6 +341,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/profile_rank_1_master"
                         android:layout_marginLeft="8dp"
+                        android:textColor="@color/white"
                         android:layout_marginTop="8dp"
                         android:text="Behaviour:"
                         android:textSize="@dimen/profile_stats_value_default" />
@@ -324,6 +352,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignTop="@id/profile_rank_2_master"
                         android:layout_alignParentEnd="true"
+                        android:textColor="@color/white"
                         android:layout_marginEnd="8dp"
                         android:text="5.0"
                         android:textSize="@dimen/profile_stats_value_default" />
@@ -336,11 +365,13 @@
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
                         android:text="Creativity:"
+                        android:textColor="@color/white"
                         android:textSize="@dimen/profile_stats_value_default" />
 
                     <TextView
                         android:id="@+id/profile_rank_3_value_master"
                         android:layout_width="wrap_content"
+                        android:textColor="@color/white"
                         android:layout_height="wrap_content"
                         android:layout_alignTop="@id/profile_rank_3_master"
                         android:layout_alignParentEnd="true"

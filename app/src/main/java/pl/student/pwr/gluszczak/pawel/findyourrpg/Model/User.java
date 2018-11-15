@@ -11,15 +11,16 @@ public class User implements Parcelable {
     private int age;
     private int gamesAsMaster = 0;
     private int gamesAsPlayer = 0;
-    private int playerCreativity = 0;
-    private int playerBehaviour = 0;
-    private int playerGameFeel = 0;
-    private int masterCreativity = 0;
-    private int masterBehaviour = 0;
-    private int masterGameFeel = 0;
+    private float playerCreativity = 0;
+    private float playerBehaviour = 0;
+    private float playerGameFeel = 0;
+    private float masterCreativity = 0;
+    private float masterBehaviour = 0;
+    private float masterGameFeel = 0;
+    private String favouriteSystem;
     private String avatarUrl;
 
-    public User(String email, String id, String username, int age, int gamesAsMaster, int gamesAsPlayer, int playerCreativity, int playerBehaviour, int playerGameFeel, int masterCreativity, int masterBehaviour, int masterGameFeel, String avatarUrl) {
+    public User(String email, String id, String username, int age, int gamesAsMaster, int gamesAsPlayer, float playerCreativity, float playerBehaviour, float playerGameFeel, float masterCreativity, float masterBehaviour, float masterGameFeel, String favouriteSystem, String avatarUrl) {
         this.email = email;
         this.id = id;
         this.username = username;
@@ -32,11 +33,13 @@ public class User implements Parcelable {
         this.masterCreativity = masterCreativity;
         this.masterBehaviour = masterBehaviour;
         this.masterGameFeel = masterGameFeel;
+        this.favouriteSystem = favouriteSystem;
         this.avatarUrl = avatarUrl;
     }
 
     public User() {
     }
+
 
     protected User(Parcel in) {
         email = in.readString();
@@ -45,12 +48,13 @@ public class User implements Parcelable {
         age = in.readInt();
         gamesAsMaster = in.readInt();
         gamesAsPlayer = in.readInt();
-        playerCreativity = in.readInt();
-        playerBehaviour = in.readInt();
-        playerGameFeel = in.readInt();
-        masterCreativity = in.readInt();
-        masterBehaviour = in.readInt();
-        masterGameFeel = in.readInt();
+        playerCreativity = in.readFloat();
+        playerBehaviour = in.readFloat();
+        playerGameFeel = in.readFloat();
+        masterCreativity = in.readFloat();
+        masterBehaviour = in.readFloat();
+        masterGameFeel = in.readFloat();
+        favouriteSystem = in.readString();
         avatarUrl = in.readString();
     }
 
@@ -62,12 +66,13 @@ public class User implements Parcelable {
         dest.writeInt(age);
         dest.writeInt(gamesAsMaster);
         dest.writeInt(gamesAsPlayer);
-        dest.writeInt(playerCreativity);
-        dest.writeInt(playerBehaviour);
-        dest.writeInt(playerGameFeel);
-        dest.writeInt(masterCreativity);
-        dest.writeInt(masterBehaviour);
-        dest.writeInt(masterGameFeel);
+        dest.writeFloat(playerCreativity);
+        dest.writeFloat(playerBehaviour);
+        dest.writeFloat(playerGameFeel);
+        dest.writeFloat(masterCreativity);
+        dest.writeFloat(masterBehaviour);
+        dest.writeFloat(masterGameFeel);
+        dest.writeString(favouriteSystem);
         dest.writeString(avatarUrl);
     }
 
@@ -87,15 +92,6 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
-
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
 
     public String getEmail() {
         return email;
@@ -121,6 +117,14 @@ public class User implements Parcelable {
         this.username = username;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public int getGamesAsMaster() {
         return gamesAsMaster;
     }
@@ -137,53 +141,60 @@ public class User implements Parcelable {
         this.gamesAsPlayer = gamesAsPlayer;
     }
 
-    public int getPlayerCreativity() {
+    public float getPlayerCreativity() {
         return playerCreativity;
     }
 
-    public void setPlayerCreativity(int playerCreativity) {
+    public void setPlayerCreativity(float playerCreativity) {
         this.playerCreativity = playerCreativity;
     }
 
-    public int getPlayerBehaviour() {
+    public float getPlayerBehaviour() {
         return playerBehaviour;
     }
 
-    public void setPlayerBehaviour(int playerBehaviour) {
+    public void setPlayerBehaviour(float playerBehaviour) {
         this.playerBehaviour = playerBehaviour;
     }
 
-    public int getPlayerGameFeel() {
+    public float getPlayerGameFeel() {
         return playerGameFeel;
     }
 
-    public void setPlayerGameFeel(int playerGameFeel) {
+    public void setPlayerGameFeel(float playerGameFeel) {
         this.playerGameFeel = playerGameFeel;
     }
 
-    public int getMasterCreativity() {
+    public float getMasterCreativity() {
         return masterCreativity;
     }
 
-    public void setMasterCreativity(int masterCreativity) {
+    public void setMasterCreativity(float masterCreativity) {
         this.masterCreativity = masterCreativity;
     }
 
-
-    public int getMasterBehaviour() {
+    public float getMasterBehaviour() {
         return masterBehaviour;
     }
 
-    public void setMasterBehaviour(int masterBehaviour) {
+    public void setMasterBehaviour(float masterBehaviour) {
         this.masterBehaviour = masterBehaviour;
     }
 
-    public int getMasterGameFeel() {
+    public float getMasterGameFeel() {
         return masterGameFeel;
     }
 
-    public void setMasterGameFeel(int masterGameFeel) {
+    public void setMasterGameFeel(float masterGameFeel) {
         this.masterGameFeel = masterGameFeel;
+    }
+
+    public String getFavouriteSystem() {
+        return favouriteSystem;
+    }
+
+    public void setFavouriteSystem(String favouriteSystem) {
+        this.favouriteSystem = favouriteSystem;
     }
 
     public String getAvatarUrl() {

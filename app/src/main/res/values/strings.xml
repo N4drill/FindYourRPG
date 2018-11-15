@@ -25,4 +25,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="login_register">Register</string>
 
 
+    <!--Game systems-->
+    <string name="system_dnd">Dungeon and Dragons</string>
+    <string name="system_warhammer">Warhammer</string>
+    <string name="system_wampir">Vampir</string>
+    <string name="system_hiroshima">Hiroshima</string>
+    <string name="system_monastyr">Monastyr</string>
+    <string name="system_pathfinder">Pathfinder</string>
+    <string name="system_cyberpunk">Cyberpunk</string>
+    <string name="system_darkeye">The dark eye</string>
+    <string name="system_default">-----------------------------------------</string>
+
 </resources>
