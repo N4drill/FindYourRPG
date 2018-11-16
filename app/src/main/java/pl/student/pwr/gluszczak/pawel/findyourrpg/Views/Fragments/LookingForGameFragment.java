@@ -92,6 +92,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                 new LatLng(topBoundary, rightBoundary)
         );
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBounds, 0));
+        Log.d(TAG, "setCameraView: Centered map at: " + mUserPosition.getGeoPoint().getLatitude() + ", " + mUserPosition.getGeoPoint().getLongitude());
     }
 
     @Override

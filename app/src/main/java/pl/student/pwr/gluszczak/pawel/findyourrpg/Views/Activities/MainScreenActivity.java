@@ -8,28 +8,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,14 +37,8 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ParcableUserPosition;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.FragmentHelper;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.CreatingGameFragment;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LibraryFragment;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LookingForGameFragment;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LookingForPlayersFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.MainMenuFragment;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.ProfileFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.SinglePageActivityWithNav;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.ERROR_DIALOG_REQUEST;
@@ -78,8 +66,7 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
         super.onCreate(savedInstanceState);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         attachUserClient();
-        setUserPosition();
-
+        //setUserPosition();
     }
 
     @Override
@@ -87,9 +74,9 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
         return mLookingForGameBundle;
     }
 
+
     private void setUserPosition() {
         Log.d(TAG, "getLastKnownLocation: called.");
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -105,11 +92,11 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
 
                     mLookingForGameBundle = new Bundle();
                     mLookingForGameBundle.putParcelable(LOOKING_FOR_GAME_BUNDLE_GEOPOSITION, mUserPosition);
+                    Log.d(TAG, "onComplete: Done attaching location to bundle with geoPoint: " + mUserPosition.getGeoPoint().getLatitude() + ", " + mUserPosition.getGeoPoint().getLongitude());
                 }
             }
         });
     }
-
 
     private void attachUserClient() {
         FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
@@ -199,6 +186,7 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
+            setUserPosition();
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -237,6 +225,7 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
+                    setUserPosition();
                 }
             }
         }
@@ -275,4 +264,5 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
             }
         }
     }
+
 }

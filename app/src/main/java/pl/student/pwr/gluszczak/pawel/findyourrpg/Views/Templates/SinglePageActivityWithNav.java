@@ -91,19 +91,6 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
         );
     }
 
-    private void updateFragmentBasedOnOptionSelect(MenuItem menuItem) {
-        Fragment chosenFragment = chooseFragment(menuItem);
-
-        //Case when user clicked on Logout...
-        if (chosenFragment == null) {
-            signOut();
-        }
-        //Otherwise..
-        else {
-            replaceFragment(chosenFragment);
-            updateNavigation(menuItem);
-        }
-    }
 
     private void signOut() {
         FirebaseAuth.getInstance().signOut();
@@ -126,34 +113,6 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
                     .replace(R.id.main_fragment_container, fragment)
                     .commit();
         }
-    }
-
-    private Fragment chooseFragment(MenuItem menuItem) {
-        Class fragmentClassFile;
-        switch (menuItem.getItemId()) {
-            case R.id.nav_create:
-                fragmentClassFile = CreatingGameFragment.class;
-                break;
-            case R.id.nav_looking:
-                fragmentClassFile = LookingForGameFragment.class;
-                break;
-            case R.id.nav_players:
-                fragmentClassFile = LookingForPlayersFragment.class;
-                break;
-            case R.id.nav_library:
-                fragmentClassFile = LibraryFragment.class;
-                break;
-            case R.id.nav_profile:
-                fragmentClassFile = ProfileFragment.class;
-                break;
-            case R.id.nav_logout:
-                return null;
-            default:
-                fragmentClassFile = MainMenuFragment.class;
-        }
-
-
-        return FragmentHelper.generateFragmentBasedOnClassName(fragmentClassFile);
     }
 
     private void replaceFragmentWithOptionSelect(MenuItem menuItem) {
@@ -217,7 +176,6 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         Class fragmentName = MainMenuFragment.class;
         replaceFragment(FragmentHelper.generateFragmentBasedOnClassName(fragmentName));
     }
