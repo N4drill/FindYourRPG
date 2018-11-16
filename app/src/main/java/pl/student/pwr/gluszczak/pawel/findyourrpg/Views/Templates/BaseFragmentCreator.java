@@ -25,11 +25,6 @@ public abstract class BaseFragmentCreator extends Fragment {
 
     private static final String TAG = "BaseFragmentCreator";
 
-    /**
-     * Points layout resource id
-     *
-     * @return Id of needed layout file
-     */
     protected abstract int getFragmentLayoutId();
 
     protected abstract void initializeComponents(View view);

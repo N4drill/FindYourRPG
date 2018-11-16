@@ -83,7 +83,8 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                        updateFragmentBasedOnOptionSelect(menuItem);
+                        replaceFragmentWithOptionSelect(menuItem);
+                        //updateFragmentBasedOnOptionSelect(menuItem);
                         return true;
                     }
                 }
@@ -155,6 +156,49 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
         return FragmentHelper.generateFragmentBasedOnClassName(fragmentClassFile);
     }
 
+    private void replaceFragmentWithOptionSelect(MenuItem menuItem) {
+        Fragment fragment;
+        Class className;
+        Bundle bundle = new Bundle();
+        switch (menuItem.getItemId()) {
+            case R.id.nav_create:
+                className = CreatingGameFragment.class;
+                break;
+            case R.id.nav_looking:
+                className = LookingForGameFragment.class;
+                bundle = lookingForGameBundlePackage();
+                break;
+            case R.id.nav_players:
+                className = LookingForPlayersFragment.class;
+                break;
+            case R.id.nav_library:
+                className = LibraryFragment.class;
+                break;
+            case R.id.nav_profile:
+                className = ProfileFragment.class;
+                break;
+            case R.id.nav_logout:
+                signOut();
+            default:
+                className = MainMenuFragment.class;
+        }
+
+        fragment = FragmentHelper.generateFragmentBasedOnClassName(className);
+        if (fragment != null) {
+
+            fragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_fragment_container, fragment)
+                    .commit();
+        }
+
+        updateNavigation(menuItem);
+    }
+
+    protected abstract Bundle lookingForGameBundlePackage();
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -205,4 +249,5 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
             });
         }
     }
+
 }

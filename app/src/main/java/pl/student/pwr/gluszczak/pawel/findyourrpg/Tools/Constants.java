@@ -8,4 +8,6 @@ abstract public class Constants {
 
     public static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
+    public static final String LOOKING_FOR_GAME_BUNDLE_GEOPOSITION = "BundlePosition";
+
 }

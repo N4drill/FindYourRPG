@@ -1,10 +1,12 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +26,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -32,8 +36,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ParcableUserPosition;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
@@ -48,6 +54,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.ProfileFragmen
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.SinglePageActivityWithNav;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.ERROR_DIALOG_REQUEST;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.LOOKING_FOR_GAME_BUNDLE_GEOPOSITION;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
 
@@ -57,6 +64,9 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
 
     //vals
     private boolean mLocationPermissionGranted = false;
+    private ParcableUserPosition mUserPosition;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private Bundle mLookingForGameBundle;
 
     @Override
     protected Fragment createFragment() {
@@ -66,8 +76,40 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         attachUserClient();
+        setUserPosition();
+
     }
+
+    @Override
+    protected Bundle lookingForGameBundlePackage() {
+        return mLookingForGameBundle;
+    }
+
+    private void setUserPosition() {
+        Log.d(TAG, "getLastKnownLocation: called.");
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mFusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<android.location.Location>() {
+            @Override
+            public void onComplete(@NonNull Task<android.location.Location> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Attached location to bundle");
+                    Location location = task.getResult();
+                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                    mUserPosition = new ParcableUserPosition();
+                    mUserPosition.setGeoPoint(geoPoint);
+
+                    mLookingForGameBundle = new Bundle();
+                    mLookingForGameBundle.putParcelable(LOOKING_FOR_GAME_BUNDLE_GEOPOSITION, mUserPosition);
+                }
+            }
+        });
+    }
+
 
     private void attachUserClient() {
         FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
