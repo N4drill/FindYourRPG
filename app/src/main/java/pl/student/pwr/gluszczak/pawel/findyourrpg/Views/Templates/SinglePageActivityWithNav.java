@@ -52,7 +52,7 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainscreen);
 
-        updateUserClientIfNeeded();
+        //updateUserClientIfNeeded();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
@@ -205,5 +205,4 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
             });
         }
     }
-
 }

@@ -31,7 +31,7 @@ abstract public class SinglePageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_singlepage);
 
-        updateUserClientIfNeeded();
+        //updateUserClientIfNeeded();
 
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -71,5 +71,11 @@ abstract public class SinglePageActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUserClientIfNeeded();
     }
 }

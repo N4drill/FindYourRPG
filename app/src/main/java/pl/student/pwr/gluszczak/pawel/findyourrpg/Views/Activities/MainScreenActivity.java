@@ -69,7 +69,6 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
         attachUserClient();
     }
 
-
     private void attachUserClient() {
         FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
 

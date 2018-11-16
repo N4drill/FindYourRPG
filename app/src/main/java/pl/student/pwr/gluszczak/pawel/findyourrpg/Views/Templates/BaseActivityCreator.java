@@ -32,9 +32,15 @@ public abstract class BaseActivityCreator extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getActivityLayoutId());
-        updateUserClientIfNeeded();
+        //updateUserClientIfNeeded();
         initializeComponents();
         setOnClickListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //updateUserClientIfNeeded();
     }
 
     private void updateUserClientIfNeeded() {

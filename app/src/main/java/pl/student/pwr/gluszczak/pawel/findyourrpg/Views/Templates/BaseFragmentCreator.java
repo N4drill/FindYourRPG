@@ -46,7 +46,6 @@ public abstract class BaseFragmentCreator extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getFragmentLayoutId(), container, false);
         updateUserClientIfNeeded();
-
         initializeComponents(view);
         setOnClickListeners();
         return view;
