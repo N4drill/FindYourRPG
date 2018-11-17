@@ -37,6 +37,8 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ParcableUserPosition;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.DEFAULT_LATITUDE;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.DEFAULT_LONGITUDE;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.hourMinToString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.precisionStringFromDouble;
@@ -46,9 +48,12 @@ public class CreatingGameFormFragment extends Fragment {
     private static final String TAG = "CreatingGameFormFragmen";
     private static final String DIALOG_DATE = "DialogDate";
     private static final String DIALOG_TIME = "DialogTime";
+    private static final String DIALOG_LOCATION = "DialogLocation";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_TIME = 1;
+    private static final int REQUEST_LOCATION = 2;
     private static final int COMMA_PRECISION = 1;
+
 
     //Views
     TextView mTitle, mLat, mLong;
@@ -88,7 +93,16 @@ public class CreatingGameFormFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Set location button");
-                ToastMaker.shortToast(getActivity(), "SET LOCATION");
+                FragmentManager manager = getFragmentManager();
+
+                if (mUserPosition == null) {
+                    setCurrentUserLocation();
+                }
+
+                LocationPickerFragment dialog = LocationPickerFragment.newInstance(mUserPosition.getGeoPoint().getLatitude(), mUserPosition.getGeoPoint().getLongitude());
+                dialog.setTargetFragment(CreatingGameFormFragment.this, REQUEST_LOCATION);
+
+                dialog.show(manager, DIALOG_LOCATION);
             }
         });
 
@@ -143,6 +157,12 @@ public class CreatingGameFormFragment extends Fragment {
 
             updateTimeButtonText(hour, min);
         }
+        if (requestCode == REQUEST_LOCATION) {
+            double latidute = data.getDoubleExtra(LocationPickerFragment.EXTRA_LAT, DEFAULT_LATITUDE);
+            double longitude = data.getDoubleExtra(LocationPickerFragment.EXTRA_LONG, DEFAULT_LONGITUDE);
+
+            updateLocationText(latidute, longitude);
+        }
     }
 
     private void updateTimeButtonText(int hour, int min) {
@@ -184,6 +204,12 @@ public class CreatingGameFormFragment extends Fragment {
         } else {
             Log.d(TAG, "updateLocationText: got null geopoint...");
         }
+    }
+
+    private void updateLocationText(double latidute, double longtidute) {
+        mLat.setText(precisionStringFromDouble(latidute, COMMA_PRECISION));
+        mLong.setText(precisionStringFromDouble(longtidute, COMMA_PRECISION));
+        Log.d(TAG, "updateLocationText: Updated location parameters to:" + latidute + ", " + longtidute);
     }
 
     private void initializeSpinners() {
