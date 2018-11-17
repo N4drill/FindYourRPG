@@ -28,12 +28,57 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <!--Game systems-->
     <string name="system_dnd">Dungeon and Dragons</string>
     <string name="system_warhammer">Warhammer</string>
-    <string name="system_wampir">Vampir</string>
+    <string name="system_vampir">Vampir</string>
     <string name="system_hiroshima">Hiroshima</string>
     <string name="system_monastyr">Monastyr</string>
     <string name="system_pathfinder">Pathfinder</string>
     <string name="system_cyberpunk">Cyberpunk</string>
     <string name="system_darkeye">The dark eye</string>
     <string name="system_default">-----------------------------------------</string>
+
+
+    <!--Experience levels -->
+    <string name="exp_1">What is RPG?</string>
+    <string name="exp_2">It is not that hard</string>
+    <string name="exp_3">Bring it on!</string>
+    <string name="exp_4">I need a real challenge</string>
+    <string name="exp_5">Where is that dragon to slay?</string>
+
+
+    <!-- Spinners arrays with headers -->
+    <string name="game_systems_header">Choose system</string>
+    <string-array name="game_systems">
+        <item>@string/game_systems_header</item>
+        <item>@string/system_dnd</item>
+        <item>@string/system_warhammer</item>
+        <item>@string/system_vampir</item>
+        <item>@string/system_hiroshima</item>
+        <item>@string/system_monastyr</item>
+        <item>@string/system_pathfinder</item>
+        <item>@string/system_cyberpunk</item>
+        <item>@string/system_darkeye</item>
+    </string-array>
+
+    <string name="exp_levels_header_min">Choose min level</string>
+    <string name="exp_levels_header_recommended">Choose recommended level</string>
+
+    <string-array name="exp_levels_min">
+        <item>@string/exp_levels_header_min</item>
+        <item>@string/exp_1</item>
+        <item>@string/exp_2</item>
+        <item>@string/exp_3</item>
+        <item>@string/exp_4</item>
+        <item>@string/exp_5</item>
+    </string-array>
+
+    <string-array name="exp_levels_rec">
+        <item>@string/exp_levels_header_recommended</item>
+        <item>@string/exp_1</item>
+        <item>@string/exp_2</item>
+        <item>@string/exp_3</item>
+        <item>@string/exp_4</item>
+        <item>@string/exp_5</item>
+    </string-array>
+
 
 </resources>

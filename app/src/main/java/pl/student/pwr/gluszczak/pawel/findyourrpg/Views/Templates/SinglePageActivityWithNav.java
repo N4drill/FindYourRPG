@@ -125,7 +125,10 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
                 break;
             case R.id.nav_looking:
                 className = LookingForGameFragment.class;
-                bundle = lookingForGameBundlePackage();
+                Bundle temp = lookingForGameBundlePackage();
+                if (temp != null) {
+                    bundle = temp;
+                }
                 break;
             case R.id.nav_players:
                 className = LookingForPlayersFragment.class;

@@ -3,4 +3,5 @@
     <dimen name="navigation_header_height">180dp</dimen>
     <dimen name="profile_statisctic_default_text_size">24sp</dimen>
     <dimen name="profile_stats_value_default">18sp</dimen>
+    <dimen name="form_default_text_size">24sp</dimen>
 </resources>

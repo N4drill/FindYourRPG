@@ -66,7 +66,6 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
         super.onCreate(savedInstanceState);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         attachUserClient();
-        //setUserPosition();
     }
 
     @Override
@@ -92,7 +91,9 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
 
                     mLookingForGameBundle = new Bundle();
                     mLookingForGameBundle.putParcelable(LOOKING_FOR_GAME_BUNDLE_GEOPOSITION, mUserPosition);
+                    Log.d(TAG, "onComplete: ----------------------------------------");
                     Log.d(TAG, "onComplete: Done attaching location to bundle with geoPoint: " + mUserPosition.getGeoPoint().getLatitude() + ", " + mUserPosition.getGeoPoint().getLongitude());
+                    Log.d(TAG, "onComplete: ----------------------------------------");
                 }
             }
         });
@@ -113,10 +114,12 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
                 if (task.isSuccessful()) {
                     User user = task.getResult().toObject(User.class);
                     ((UserClient) (getApplicationContext())).setUser(user);
+                    Log.d(TAG, "onComplete: ------------------------------");
                     Log.d(TAG, "onComplete: Successfully updated UserClient:");
                     Log.d(TAG, "onComplete: UserClient, username:" + user.getUsername());
                     Log.d(TAG, "onComplete: UserClient, email:" + user.getEmail());
                     Log.d(TAG, "onComplete: UserClient, uid:" + user.getId());
+                    Log.d(TAG, "onComplete: ------------------------------");
                     updateNavHeader();
                 } else {
                     Log.d(TAG, "onComplete: failed");
