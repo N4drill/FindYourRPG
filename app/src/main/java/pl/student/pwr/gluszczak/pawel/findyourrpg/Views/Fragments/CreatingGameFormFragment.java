@@ -1,6 +1,8 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +28,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.Date;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -32,19 +37,24 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ParcableUserPosition;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.LOOKING_FOR_GAME_BUNDLE_GEOPOSITION;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToString;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.hourMinToString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.precisionStringFromDouble;
 
 public class CreatingGameFormFragment extends Fragment {
 
     private static final String TAG = "CreatingGameFormFragmen";
+    private static final String DIALOG_DATE = "DialogDate";
+    private static final String DIALOG_TIME = "DialogTime";
+    private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_TIME = 1;
     private static final int COMMA_PRECISION = 1;
 
     //Views
     TextView mTitle, mLat, mLong;
     EditText mDescription;
     FloatingActionButton mAcceptButton;
-    Button mSetLocationButton;
+    Button mSetLocationButton, mSetDateButton, mSetHourButton;
     Spinner mNeededPlayersSpinner, mSystemSpinner, mMinExpSpinner, mRecExpSpinner;
 
     //Vals
@@ -71,6 +81,76 @@ public class CreatingGameFormFragment extends Fragment {
         setListeners();
 
         return view;
+    }
+
+    private void setListeners() {
+        mSetLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Set location button");
+                ToastMaker.shortToast(getActivity(), "SET LOCATION");
+            }
+        });
+
+        mAcceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Accept form button");
+                ToastMaker.shortToast(getActivity(), "ACCEPT");
+            }
+        });
+
+        mSetDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Set date button");
+                FragmentManager manager = getFragmentManager();
+                DatePickerFragment dialog = DatePickerFragment.newInstance(new Date());
+                dialog.setTargetFragment(CreatingGameFormFragment.this, REQUEST_DATE);
+
+                dialog.show(manager, DIALOG_DATE);
+            }
+        });
+
+        mSetHourButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Set hour button");
+                FragmentManager manager = getFragmentManager();
+                TimePickerFragment dialog = TimePickerFragment.newInstance(new Date());
+                dialog.setTargetFragment(CreatingGameFormFragment.this, REQUEST_TIME);
+
+                dialog.show(manager, DIALOG_TIME);
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            updateDateButtonText(date);
+        }
+
+        if (requestCode == REQUEST_TIME) {
+            int hour = data.getIntExtra(TimePickerFragment.EXTRA_HOUR, 12);
+            int min = data.getIntExtra(TimePickerFragment.EXTRA_MIN, 00);
+
+            updateTimeButtonText(hour, min);
+        }
+    }
+
+    private void updateTimeButtonText(int hour, int min) {
+        mSetHourButton.setText(hourMinToString(hour, min));
+    }
+
+    private void updateDateButtonText(Date date) {
+        mSetDateButton.setText(dateToString(date));
     }
 
     private void setCurrentUserLocation() {
@@ -112,6 +192,11 @@ public class CreatingGameFormFragment extends Fragment {
         initializeMinExpSpinner();
         initializeRecExpSpinner();
         initializePlayerNumberSpinner();
+        disableHeaderSelections();
+    }
+
+    private void disableHeaderSelections() {
+        mSystemSpinner.setSelection(0, false);
     }
 
     private void initializeSystemSpinner() {
@@ -146,27 +231,6 @@ public class CreatingGameFormFragment extends Fragment {
         Log.d(TAG, "initializePlayerNumberSpinner: done");
     }
 
-
-    private void setListeners() {
-        mSetLocationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: Set map button selected");
-                ToastMaker.shortToast(getActivity(), "Set Map button!");
-            }
-        });
-
-        mAcceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: Accept form button");
-                ToastMaker.shortToast(getActivity(), "ACCEPT");
-            }
-        });
-
-
-    }
-
     private void initializeComponents(View view) {
         mTitle = view.findViewById(R.id.form_title);
         mLat = view.findViewById(R.id.form_lat);
@@ -178,6 +242,8 @@ public class CreatingGameFormFragment extends Fragment {
         mSystemSpinner = view.findViewById(R.id.form_system);
         mMinExpSpinner = view.findViewById(R.id.form_minExp);
         mRecExpSpinner = view.findViewById(R.id.form_recommendedExp);
+        mSetDateButton = view.findViewById(R.id.form_date_button);
+        mSetHourButton = view.findViewById(R.id.form_hour_button);
         Log.d(TAG, "initializeComponents: done");
     }
 }

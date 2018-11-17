@@ -1,6 +1,7 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -45,15 +46,15 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
+    private TextView mNavName;
+    private CircleImageView mNavImage;
 
     @Override
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainscreen);
-
-        //updateUserClientIfNeeded();
-
+        initializeNavigationHeader();
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
 
@@ -65,6 +66,13 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
                     .add(R.id.main_fragment_container, fragment)
                     .commit();
         }
+
+        new AsyncUpdateUser().execute();
+    }
+
+    private void initializeNavigationHeader() {
+        mNavName = findViewById(R.id.nav_name);
+        mNavImage = findViewById(R.id.nav_image);
     }
 
 
@@ -177,17 +185,11 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        Class fragmentName = MainMenuFragment.class;
-        replaceFragment(FragmentHelper.generateFragmentBasedOnClassName(fragmentName));
-    }
-
     private void updateUserClientIfNeeded() {
-        Log.d(TAG, "updateUserClient: Checking UserClient");
-
         if (((UserClient) (getApplicationContext())).getUser() == null) {
-            Log.d(TAG, "updateUserClientIfNeeded: Need to update UserClient, doing so");
+            Log.d(TAG, "updateUserClientIfNeeded: ----------------");
+            Log.d(TAG, "updateUserClientIfNeeded: UserClient is empty, trying to update.");
+            Log.d(TAG, "updateUserClientIfNeeded: ----------------");
             FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
 
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -211,4 +213,23 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
         }
     }
 
+    private class AsyncUpdateUser extends AsyncTask<Void, Void, User> {
+
+        @Override
+        protected User doInBackground(Void... voids) {
+            return ((UserClient) (getApplicationContext())).getUser();
+        }
+
+        @Override
+        protected void onPostExecute(User user) {
+            Log.d(TAG, "onPostExecute: Trying to update nav header");
+            if (user != null) {
+                TextView navName = findViewById(R.id.nav_name);
+                navName.setText(user.getUsername());
+                Log.d(TAG, "onPostExecute: Success");
+            } else {
+                Log.d(TAG, "onPostExecute: UserClient is null");
+            }
+        }
+    }
 }
