@@ -2,6 +2,11 @@
     <!-- Google maps API key  -->
     <string name="google_map_api_key">AIzaSyAQqlJjDrGj8h4Gggid1UXDPPc9FqbBVs0</string>
 
+    <!-- Firestore -->
+    <string name="collection_users">Users</string>
+    <string name="collection_events">Events</string>
+
+
     <string name="app_name">FindYourRPG</string>
     <string name="login">Login</string>
     <string name="toast_default">Click</string>
@@ -21,8 +26,9 @@
     <string name="lorem_ipsum_medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequat dui at vestibulum. Sed ut nisi vitae mi pellentesque mollis at id leo. Morbi purus quam, interdum id risus id, porttitor ornare enim. Fusce consequat vulputate pellentesque.</string>
     <string name="lorem_ipsum_long">
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequat dui at vestibulum. Sed ut nisi vitae mi pellentesque mollis at id leo. Morbi purus quam, interdum id risus id, porttitor ornare enim. Fusce consequat vulputate pellentesque. Ut risus libero, malesuada ut feugiat eget, lobortis ut odio. Etiam elit ante, ullamcorper sed sollicitudin eu, convallis at ex. Ut pretium lacus quam, ut scelerisque nisl accumsan vitae.</string>
-    <string name="collection_users">Users</string>
     <string name="login_register">Register</string>
+    <string name="form_set_date">Set date</string>
+    <string name="form_set_time">Set time</string>
 
 
     <!--Game systems-->
@@ -45,10 +51,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="exp_5">Where is that dragon to slay?</string>
 
 
-    <!-- Spinners arrays with headers -->
-    <string name="game_systems_header">Choose system</string>
+    <!-- Spinners headers -->
+    <string name="header_game_systems">Choose game system</string>
+    <string name="header_exp_levels_min">Choose min level</string>
+    <string name="header_exp_levels_recommended">Choose recommended level</string>
+    <string name="header_players_needed">Choose players needed</string>
+
+    <!-- Spinners arrays -->
+
     <string-array name="game_systems">
-        <item>@string/game_systems_header</item>
+        <item>@string/header_game_systems</item>
         <item>@string/system_dnd</item>
         <item>@string/system_warhammer</item>
         <item>@string/system_vampir</item>
@@ -59,11 +71,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
         <item>@string/system_darkeye</item>
     </string-array>
 
-    <string name="exp_levels_header_min">Choose min level</string>
-    <string name="exp_levels_header_recommended">Choose recommended level</string>
 
     <string-array name="exp_levels_min">
-        <item>@string/exp_levels_header_min</item>
+        <item>@string/header_exp_levels_min</item>
         <item>@string/exp_1</item>
         <item>@string/exp_2</item>
         <item>@string/exp_3</item>
@@ -72,7 +82,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     </string-array>
 
     <string-array name="exp_levels_rec">
-        <item>@string/exp_levels_header_recommended</item>
+        <item>@string/header_exp_levels_recommended</item>
         <item>@string/exp_1</item>
         <item>@string/exp_2</item>
         <item>@string/exp_3</item>
