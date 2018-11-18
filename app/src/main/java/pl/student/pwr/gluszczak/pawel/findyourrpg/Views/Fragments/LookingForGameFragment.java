@@ -25,8 +25,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ParcableUserPosition;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseFragmentCreator;
@@ -46,6 +54,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private GoogleMap mGoogleMap;
     private LatLngBounds mMapBounds;
     private ParcableUserPosition mUserPosition;
+    private ArrayList<Event> mEvents = new ArrayList<>();
 
     private void initGoogleMap(Bundle savedInstanceState) {
 
@@ -74,26 +83,11 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_looking_for_game, container, false);
         mMapView = view.findViewById(R.id.lfg_map);
-
         initGoogleMap(savedInstanceState);
 
         return view;
     }
 
-    private void setCameraView() {
-        //to make rectangle boundary
-        double bottomBoundary = mUserPosition.getGeoPoint().getLatitude() - BOUNDARY_MARGIN;
-        double leftBoundary = mUserPosition.getGeoPoint().getLongitude() - BOUNDARY_MARGIN;
-        double topBoundary = mUserPosition.getGeoPoint().getLatitude() + BOUNDARY_MARGIN;
-        double rightBoundary = mUserPosition.getGeoPoint().getLongitude() + BOUNDARY_MARGIN;
-
-        mMapBounds = new LatLngBounds(
-                new LatLng(bottomBoundary, leftBoundary),
-                new LatLng(topBoundary, rightBoundary)
-        );
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBounds, 0));
-        Log.d(TAG, "setCameraView: Centered map at: " + mUserPosition.getGeoPoint().getLatitude() + ", " + mUserPosition.getGeoPoint().getLongitude());
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -128,13 +122,74 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
 
     @Override
     public void onMapReady(GoogleMap map) {
-        map.addMarker(new MarkerOptions().position(new LatLng(51.107883, 17.038538)).title("Wroclaw"));
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         map.setMyLocationEnabled(true);
         mGoogleMap = map;
         setCameraView();
+        showEventsOnMap();
+
+    }
+
+    private void setCameraView() {
+        //to make rectangle boundary
+        double bottomBoundary = mUserPosition.getGeoPoint().getLatitude() - BOUNDARY_MARGIN;
+        double leftBoundary = mUserPosition.getGeoPoint().getLongitude() - BOUNDARY_MARGIN;
+        double topBoundary = mUserPosition.getGeoPoint().getLatitude() + BOUNDARY_MARGIN;
+        double rightBoundary = mUserPosition.getGeoPoint().getLongitude() + BOUNDARY_MARGIN;
+
+        mMapBounds = new LatLngBounds(
+                new LatLng(bottomBoundary, leftBoundary),
+                new LatLng(topBoundary, rightBoundary)
+        );
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBounds, 0));
+        Log.d(TAG, "setCameraView: Centered map at: " + mUserPosition.getGeoPoint().getLatitude() + ", " + mUserPosition.getGeoPoint().getLongitude());
+    }
+
+    private void showEventsOnMap() {
+        Log.d(TAG, "getEventsFromDB: ------------------------------");
+        Log.d(TAG, "getEventsFromDB: Trying to receive events from DB");
+        Log.d(TAG, "getEventsFromDB: ------------------------------");
+        FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+
+        mDatabase.collection(getString(R.string.collection_events))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            long currentDateTime = new Date().getTime();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Event event = document.toObject(Event.class);
+                                //TODO: Dodac jako warunek wyswietlania tylko tych w przyszlosci...
+                                //if (currentDateTime > event.getDate().getTime()) {
+                                Log.d(TAG, "onComplete: =>Document " + document.getId() + "received, adding");
+                                mEvents.add(document.toObject(Event.class));
+                                //}
+                            }
+                            placeMarkersOnMap();
+                        } else {
+                            Log.d(TAG, "onComplete: failed to obtain objects");
+                        }
+                    }
+                });
+
+    }
+
+    private void placeMarkersOnMap() {
+        Log.d(TAG, "placeMarkersOnMap: Current array state:");
+        for (Event e : mEvents) {
+            Log.d(TAG, "placeMarkersOnMap: " + e.getTitle());
+        }
+
+        for (Event event : mEvents) {
+            mGoogleMap.addMarker(
+                    new MarkerOptions()
+                            .title(event.getTitle())
+                            .position(new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()))
+            );
+        }
     }
 
 

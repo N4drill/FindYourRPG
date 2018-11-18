@@ -28,10 +28,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Calendar;
@@ -55,7 +53,7 @@ import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isHo
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isToday;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.DEFAULT_LATITUDE;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.DEFAULT_LONGITUDE;
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToString;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.hourMinToString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.precisionStringFromDouble;
 
@@ -220,6 +218,7 @@ public class CreatingGameFormFragment extends Fragment {
         event.setParticipants(participants);
         event.setDate(new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), mCurrentHour, mCurrentMin).getTime());
         event.setGame_maser(user);
+        event.setSystem(mSystemSpinner.getSelectedItem().toString());
 
         return event;
     }
@@ -257,7 +256,7 @@ public class CreatingGameFormFragment extends Fragment {
     }
 
     private void updateDateButtonText(Date date) {
-        mSetDateButton.setText(dateToString(date));
+        mSetDateButton.setText(dateToDateString(date));
     }
 
     private void setCurrentUserLocation() {

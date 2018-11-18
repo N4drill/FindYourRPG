@@ -36,7 +36,7 @@ public class LocationPickerFragment extends AppCompatDialogFragment implements O
     private static final String ARG_LAT = "lat";
     private static final String ARG_LONG = "long";
 
-    private static final double BOUNDARY_MARGIN = 0.05;
+    private static final double BOUNDARY_MARGIN = 0.001;
 
     public static final String EXTRA_LAT = "pl.student.pwr.gluszczak.pawel.findyourrpg.lat";
     public static final String EXTRA_LONG = "pl.student.pwr.gluszczak.pawel.findyourrpg.long";

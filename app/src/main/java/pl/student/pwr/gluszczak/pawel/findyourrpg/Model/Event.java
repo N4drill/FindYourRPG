@@ -8,7 +8,7 @@ import com.google.firebase.firestore.GeoPoint;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Event implements Parcelable {
+public class Event implements Parcelable, Comparable<Event> {
 
     private String title;
     private String min_exp;
@@ -19,8 +19,9 @@ public class Event implements Parcelable {
     private ArrayList<User> participants;
     private Date date;
     private User game_maser;
+    private String system;
 
-    public Event(String title, String min_exp, String rec_exp, int needed_players, GeoPoint localization, String description, ArrayList<User> participants, Date date, User game_maser) {
+    public Event(String title, String min_exp, String rec_exp, int needed_players, GeoPoint localization, String description, ArrayList<User> participants, Date date, User game_maser, String system) {
         this.title = title;
         this.min_exp = min_exp;
         this.rec_exp = rec_exp;
@@ -30,10 +31,12 @@ public class Event implements Parcelable {
         this.participants = participants;
         this.date = date;
         this.game_maser = game_maser;
+        this.system = system;
     }
 
     public Event() {
     }
+
 
     protected Event(Parcel in) {
         title = in.readString();
@@ -43,6 +46,7 @@ public class Event implements Parcelable {
         description = in.readString();
         participants = in.createTypedArrayList(User.CREATOR);
         game_maser = in.readParcelable(User.class.getClassLoader());
+        system = in.readString();
     }
 
     @Override
@@ -54,6 +58,7 @@ public class Event implements Parcelable {
         dest.writeString(description);
         dest.writeTypedList(participants);
         dest.writeParcelable(game_maser, flags);
+        dest.writeString(system);
     }
 
     @Override
@@ -72,6 +77,14 @@ public class Event implements Parcelable {
             return new Event[size];
         }
     };
+
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
+    }
 
     public User getGame_maser() {
         return game_maser;
@@ -146,4 +159,14 @@ public class Event implements Parcelable {
     }
 
 
+    /**
+     * Returns -1 if self Event is earlier than "e2", 0 if is same, 1 if self Event is later than "e2"
+     *
+     * @param e2
+     * @return
+     */
+    @Override
+    public int compareTo(Event e2) {
+        return this.getDate().getTime() < e2.getDate().getTime() ? -1 : this.getDate().getTime() == e2.getDate().getTime() ? 0 : 1;
+    }
 }
