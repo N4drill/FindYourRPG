@@ -50,6 +50,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="exp_4">I need a real challenge</string>
     <string name="exp_5">Where is that dragon to slay?</string>
 
+    <!-- Shorter Experience levels-->
+    <string name="exp_1_s">Newbie</string>
+    <string name="exp_2_s">Rookie</string>
+    <string name="exp_3_s">Regular</string>
+    <string name="exp_4_s">Master</string>
+    <string name="exp_5_s">Legend</string>
 
     <!-- Spinners headers -->
     <string name="header_game_systems">Choose game system</string>

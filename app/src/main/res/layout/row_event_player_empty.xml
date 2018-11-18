@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/row_single_participant_height"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/row_event_player_empty_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/row_event_player_empty_button"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="EMPTY SLOT"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+
+        <ImageButton
+            android:id="@+id/row_event_player_empty_button"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_participate"
+            android:layout_marginRight="60dp"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@android:color/transparent"
+            android:scaleType="centerCrop"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>
