@@ -1,51 +1,52 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ClusterMarker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ParcableUserPosition;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseFragmentCreator;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.MyClusterManagerRenderer;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.LOOKING_FOR_GAME_BUNDLE_GEOPOSITION;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAPVIEW_BUNDLE_KEY;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToTimeString;
 
-public class LookingForGameFragment extends Fragment implements OnMapReadyCallback {
+public class LookingForGameFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private static final String TAG = "LookingForGameFragment";
-    private static final double BOUNDARY_MARGIN = .1;
+    private static final double BOUNDARY_MARGIN = .01;
 
     //views
     private MapView mMapView;
@@ -55,6 +56,9 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private LatLngBounds mMapBounds;
     private ParcableUserPosition mUserPosition;
     private ArrayList<Event> mEvents = new ArrayList<>();
+    private ClusterManager mClusterManager;
+    private MyClusterManagerRenderer mClusterManagerRenderer;
+    private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
 
     private void initGoogleMap(Bundle savedInstanceState) {
 
@@ -127,6 +131,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         }
         map.setMyLocationEnabled(true);
         mGoogleMap = map;
+        mGoogleMap.setOnInfoWindowClickListener(this);
         setCameraView();
         showEventsOnMap();
 
@@ -178,18 +183,55 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     }
 
     private void placeMarkersOnMap() {
-        Log.d(TAG, "placeMarkersOnMap: Current array state:");
-        for (Event e : mEvents) {
-            Log.d(TAG, "placeMarkersOnMap: " + e.getTitle());
+//        Log.d(TAG, "placeMarkersOnMap: Current array state:");
+//        for (Event e : mEvents) {
+//            Log.d(TAG, "placeMarkersOnMap: " + e.getTitle());
+//        }
+//
+//        for (Event event : mEvents) {
+//            mGoogleMap.addMarker(
+//                    new MarkerOptions()
+//                            .title(event.getTitle())
+//                            .position(new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()))
+//            );
+//        }
+
+        if (mGoogleMap != null) {
+            if (mClusterManager == null) {
+                mClusterManager = new ClusterManager<ClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
+            }
+
+            if (mClusterManagerRenderer == null) {
+                mClusterManagerRenderer = new MyClusterManagerRenderer(
+                        getActivity(),
+                        mGoogleMap,
+                        mClusterManager
+                );
+
+                mClusterManager.setRenderer(mClusterManagerRenderer);
+            }
         }
+        Log.d(TAG, "placeMarkersOnMap: End of Clusters preparation");
 
         for (Event event : mEvents) {
-            mGoogleMap.addMarker(
-                    new MarkerOptions()
-                            .title(event.getTitle())
-                            .position(new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()))
-            );
+            try {
+                ClusterMarker newClusterMarker = new ClusterMarker(
+                        new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()),
+                        event.getTitle(),
+                        dateToDateString(event.getDate()) + ", " + dateToTimeString(event.getDate()),
+                        //TODO: Replace with user icon...
+                        R.drawable.ic_placeholder,
+                        event
+                );
+
+                mClusterManager.addItem(newClusterMarker);
+                mClusterMarkers.add(newClusterMarker);
+
+            } catch (NullPointerException ex) {
+                Log.d(TAG, "placeMarkersOnMap: NullPointerException " + ex.getMessage());
+            }
         }
+        mClusterManager.cluster();
     }
 
 
@@ -209,5 +251,27 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(marker.getTitle())
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+
     }
 }

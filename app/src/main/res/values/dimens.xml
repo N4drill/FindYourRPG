@@ -4,4 +4,6 @@
     <dimen name="profile_statisctic_default_text_size">24sp</dimen>
     <dimen name="profile_stats_value_default">18sp</dimen>
     <dimen name="form_default_text_size">24sp</dimen>
+    <dimen name="cluster_default_size">36dp</dimen>
+    <dimen name="cluster_default_padding">2dp</dimen>
 </resources>
