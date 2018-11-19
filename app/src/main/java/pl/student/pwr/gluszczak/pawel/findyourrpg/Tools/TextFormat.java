@@ -52,6 +52,12 @@ public abstract class TextFormat {
         return builder.toString();
     }
 
+    /**
+     * Returns time in proper string format
+     *
+     * @param date
+     * @return
+     */
     public static String dateToTimeString(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -63,6 +69,17 @@ public abstract class TextFormat {
         builder.append(":");
         builder.append(min < 10 ? "0" + min : min);
         return builder.toString();
+    }
+
+    /**
+     * Returns String with players needed and current in proper String format
+     *
+     * @param needed
+     * @param current
+     * @return
+     */
+    public static String playersNeededLeft(int needed, int current) {
+        return "" + current + "/" + needed;
     }
 
 }

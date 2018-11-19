@@ -2,6 +2,7 @@ package pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +21,12 @@ import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateTo
 
 public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHolder> {
 
+    private static final String TAG = "CreatingAdapter";
 
-    public List<Event> mEvents;
+    private List<Event> mEvents;
 
     public CreatingAdapter(List<Event> events) {
+        Log.d(TAG, "CreatingAdapter: ");
         Collections.sort(events);
         mEvents = events;
     }
@@ -31,6 +34,7 @@ public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+        Log.d(TAG, "onCreateViewHolder: ");
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.row_event, parent, false);
         CreatingAdapter.ViewHolder viewHolder = new ViewHolder(view);
@@ -39,6 +43,7 @@ public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+        Log.d(TAG, "onBindViewHolder: ");
         Event event = mEvents.get(position);
         viewHolder.updateUI(event);
     }
@@ -55,6 +60,7 @@ public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHo
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            Log.d(TAG, "ViewHolder: ");
             title = itemView.findViewById(R.id.row_event_title);
             date = itemView.findViewById(R.id.row_event_date);
             time = itemView.findViewById(R.id.row_event_time);
@@ -63,6 +69,7 @@ public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHo
         }
 
         public void updateUI(Event event) {
+            Log.d(TAG, "updateUI: ");
             title.setText(event.getTitle());
             date.setText(dateToDateString(event.getDate()));
             time.setText(dateToTimeString(event.getDate()));

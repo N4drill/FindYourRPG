@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -112,7 +113,7 @@ public class RegisterActivity extends BaseActivityCreator {
         showProgressBar();
 
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "onComplete: " + task.isSuccessful());
@@ -145,6 +146,10 @@ public class RegisterActivity extends BaseActivityCreator {
                                     }
                                 }
                             });
+                        } else {
+                            Log.d(TAG, "onComplete: failure" + task.getException());
+                            ToastMaker.shortToast(RegisterActivity.this, task.getException().getMessage());
+                            hideProgressBar();
                         }
                     }
                 });

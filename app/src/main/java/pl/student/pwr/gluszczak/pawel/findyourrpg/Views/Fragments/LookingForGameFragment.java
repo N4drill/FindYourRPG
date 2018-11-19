@@ -1,18 +1,22 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,7 +26,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -40,6 +46,9 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.MyClusterManagerRenderer
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.LOOKING_FOR_GAME_BUNDLE_GEOPOSITION;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAPVIEW_BUNDLE_KEY;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_DATE;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_EVENT;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_LOCATION;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToTimeString;
 
@@ -47,6 +56,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
 
     private static final String TAG = "LookingForGameFragment";
     private static final double BOUNDARY_MARGIN = .01;
+    private static final String DIALOG_EVENT = "DialogEvent";
 
     //views
     private MapView mMapView;
@@ -183,19 +193,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     }
 
     private void placeMarkersOnMap() {
-//        Log.d(TAG, "placeMarkersOnMap: Current array state:");
-//        for (Event e : mEvents) {
-//            Log.d(TAG, "placeMarkersOnMap: " + e.getTitle());
-//        }
-//
-//        for (Event event : mEvents) {
-//            mGoogleMap.addMarker(
-//                    new MarkerOptions()
-//                            .title(event.getTitle())
-//                            .position(new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()))
-//            );
-//        }
-
         if (mGoogleMap != null) {
             if (mClusterManager == null) {
                 mClusterManager = new ClusterManager<ClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
@@ -256,22 +253,72 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
 
     @Override
     public void onInfoWindowClick(Marker marker) {
+        Event event = null;
+        for (ClusterMarker cm : mClusterMarkers) {
+            if (cm.getEvent().getTitle().equals(marker.getTitle())) {
+                event = cm.getEvent();
+            }
+        }
+        if (event != null) {
+            Log.d(TAG, "onInfoWindowClick: clicked on marker");
+            FragmentManager manager = getFragmentManager();
+            EventDetailsDialogFragment dialog = EventDetailsDialogFragment.newInstance(event);
+            dialog.setTargetFragment(LookingForGameFragment.this, REQUEST_EVENT);
+            //TestDialog dialog = TestDialog.newInstance(event);
+            dialog.show(manager, DIALOG_EVENT);
+        }
+    }
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(marker.getTitle())
-                .setCancelable(true)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_EVENT) {
+            Event event = data.getParcelableExtra(EventDetailsDialogFragment.EXTRA_EVENT);
+            updateDatabase(event);
+        }
+    }
+
+    private void updateDatabase(final Event event) {
+        FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+
+        DocumentReference eventRef = mDatabase
+                .collection(getString(R.string.collection_events))
+                .document(event.getId());
+
+        eventRef.set(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Updated database event =>" + event.getId());
+                    updateEventsArray(event);
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "onFailure: Failed to update array");
+            }
+        });
+
+    }
+
+    private void updateEventsArray(Event event) {
+        Log.d(TAG, "updateEventsArray: Trying to update array");
+        Log.d(TAG, "updateEventsArray: mEvents Array size before: " + mEvents.size());
+        for (Event e : mEvents) {
+            if (event.getId().equals(e.getId())) {
+                Log.d(TAG, "updateEventsArray: Event" + e.getId() + "has users: " + e.getParticipants().size() + " before");
+                e.setParticipants(event.getParticipants());
+                Log.d(TAG, "updateEventsArray: Array updated");
+                Log.d(TAG, "updateEventsArray: Event" + e.getId() + "has users: " + e.getParticipants().size() + " after");
+
+            }
+        }
+        Log.d(TAG, "updateEventsArray: mEvents Array size after: " + mEvents.size());
+
 
     }
 }

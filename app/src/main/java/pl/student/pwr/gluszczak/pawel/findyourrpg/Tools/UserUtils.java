@@ -1,5 +1,7 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Tools;
 
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
+
 abstract public class UserUtils {
 
     /**
@@ -25,5 +27,31 @@ abstract public class UserUtils {
         return (a + b) / 2;
     }
 
+
+    public static float calculateUserAverageAsGM(User user) {
+        float a = user.getMasterCreativity();
+        float b = user.getMasterBehaviour();
+        float c = user.getMasterGameFeel();
+
+        return (a + b + c) / 3;
+    }
+
+    public static float calculateUserAverageAsPlayer(User user) {
+        float a = user.getPlayerCreativity();
+        float b = user.getPlayerBehaviour();
+        float c = user.getPlayerGameFeel();
+        return (a + b + c) / 3;
+    }
+
+    public static float calculateUserAverage(User user) {
+        float a = user.getMasterCreativity();
+        float b = user.getMasterBehaviour();
+        float c = user.getMasterGameFeel();
+        float a2 = user.getPlayerCreativity();
+        float b2 = user.getPlayerBehaviour();
+        float c2 = user.getPlayerGameFeel();
+
+        return (((a + b + c) / 3) + ((a2 + b2 + c2) / 3)) / 2;
+    }
 
 }

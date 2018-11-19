@@ -53,6 +53,9 @@ import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isHo
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isToday;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.DEFAULT_LATITUDE;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.DEFAULT_LONGITUDE;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_DATE;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_LOCATION;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_TIME;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.hourMinToString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.precisionStringFromDouble;
@@ -63,10 +66,7 @@ public class CreatingGameFormFragment extends Fragment {
     private static final String DIALOG_DATE = "DialogDate";
     private static final String DIALOG_TIME = "DialogTime";
     private static final String DIALOG_LOCATION = "DialogLocation";
-    private static final int REQUEST_DATE = 0;
-    private static final int REQUEST_TIME = 1;
-    private static final int REQUEST_LOCATION = 2;
-    private static final int COMMA_PRECISION = 1;
+    private static final int COMMA_PRECISION = 3;
 
 
     //Views
@@ -182,6 +182,9 @@ public class CreatingGameFormFragment extends Fragment {
                 .collection(getString(R.string.collection_events))
                 .document();
 
+
+        String newID = newEventRef.getId();
+        eventToAdd.setId(newID);
         newEventRef.set(eventToAdd).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -246,6 +249,7 @@ public class CreatingGameFormFragment extends Fragment {
         if (requestCode == REQUEST_LOCATION) {
             double latidute = data.getDoubleExtra(LocationPickerFragment.EXTRA_LAT, DEFAULT_LATITUDE);
             double longitude = data.getDoubleExtra(LocationPickerFragment.EXTRA_LONG, DEFAULT_LONGITUDE);
+            mUserPosition.setGeoPoint(new GeoPoint(latidute, longitude));
 
             updateLocationText(latidute, longitude);
         }

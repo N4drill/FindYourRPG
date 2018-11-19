@@ -81,9 +81,6 @@ public class LocationPickerFragment extends AppCompatDialogFragment implements O
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //prepare result
-
-                        //default
                         sendResult(Activity.RESULT_OK, mLatitude, mLongtidute);
 
                     }

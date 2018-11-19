@@ -31,6 +31,23 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="form_set_time">Set time</string>
 
 
+    <!-- Event details dialogs -->
+
+    <!-- Normal dialog without user -->
+    <string name="event_dialog_possitive">Join</string>
+    <string name="event_dialog_negative">Decline</string>
+
+    <!-- Dialog with user on list -->
+    <string name="event_dialog_possitive_onList">Leave event</string>
+    <string name="event_dialog_negative_onList">Close</string>
+
+    <!-- Full list -->
+    <string name="event_dialog_possitive_fullList">Leave</string>
+    <string name="event_dialog_negative_fullList">Close</string>
+
+    <!-- end of Event details dialogs -->
+
+
     <!--Game systems-->
     <string name="system_dnd">Dungeon and Dragons</string>
     <string name="system_warhammer">Warhammer</string>

@@ -10,6 +10,7 @@ import java.util.Date;
 
 public class Event implements Parcelable, Comparable<Event> {
 
+    private String id;
     private String title;
     private String min_exp;
     private String rec_exp;
@@ -21,7 +22,9 @@ public class Event implements Parcelable, Comparable<Event> {
     private User game_maser;
     private String system;
 
-    public Event(String title, String min_exp, String rec_exp, int needed_players, GeoPoint localization, String description, ArrayList<User> participants, Date date, User game_maser, String system) {
+
+    public Event(String id, String title, String min_exp, String rec_exp, int needed_players, GeoPoint localization, String description, ArrayList<User> participants, Date date, User game_maser, String system) {
+        this.id = id;
         this.title = title;
         this.min_exp = min_exp;
         this.rec_exp = rec_exp;
@@ -37,8 +40,8 @@ public class Event implements Parcelable, Comparable<Event> {
     public Event() {
     }
 
-
     protected Event(Parcel in) {
+        id = in.readString();
         title = in.readString();
         min_exp = in.readString();
         rec_exp = in.readString();
@@ -51,6 +54,7 @@ public class Event implements Parcelable, Comparable<Event> {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(title);
         dest.writeString(min_exp);
         dest.writeString(rec_exp);
@@ -77,6 +81,14 @@ public class Event implements Parcelable, Comparable<Event> {
             return new Event[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getSystem() {
         return system;
