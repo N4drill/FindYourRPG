@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,12 +26,13 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ExpierienceParser.expierienceNameParser;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ExpierienceParser.expierienceNameParserLongToShort;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.playersNeededLeft;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateAverage;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserAverageAsGM;
 
 public class EventDetailsDialogFragment extends AppCompatDialogFragment {
+
 
     private static final String TAG = "EventDetailsDialogFragm";
     private static final String ARG_EVENT = "event";
@@ -180,8 +180,8 @@ public class EventDetailsDialogFragment extends AppCompatDialogFragment {
         //image for system
         mDate.setText(event.getDate().toString());
         mSystem.setText(event.getSystem());
-        mMinExp.setText(expierienceNameParser(getActivity(), event.getMin_exp()));
-        mRecExp.setText(expierienceNameParser(getActivity(), event.getRec_exp()));
+        mMinExp.setText(expierienceNameParserLongToShort(getActivity(), event.getMin_exp()));
+        mRecExp.setText(expierienceNameParserLongToShort(getActivity(), event.getRec_exp()));
         mPlayers.setText(playersNeededLeft(event.getNeeded_players(), event.getParticipants().size()));
         //image for GM
         mGMName.setText(event.getGame_maser().getUsername());

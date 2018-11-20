@@ -8,43 +8,55 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="1"
+        android:weightSum="100"
         android:background="@color/white">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="50"
             android:id="@+id/lfg_form_container">
 
+            <include
+                layout="@layout/part_form_filters"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Form"
-                android:textSize="72sp" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="50"
             android:id="@+id/lfg_map_container">
 
             <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/lfg_map"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/lfg_map" />
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+
+
+            <ImageButton
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_expand_map"
+                android:background="@color/white"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/lfg_exp_button" />
         </RelativeLayout>
 
     </LinearLayout>
 
     <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:id="@+id/lfg_progressbar"
+        android:layout_width="89dp"
+        android:layout_height="94dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="131dp"
+        android:visibility="invisible" />
 
 </RelativeLayout>

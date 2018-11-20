@@ -1,8 +1,8 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,12 +11,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,27 +40,31 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Enums.ExpierienceLevelMap;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ClusterMarker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ParcableUserPosition;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.MyClusterManagerRenderer;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ViewWeightAnimationWrapper;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.LOOKING_FOR_GAME_BUNDLE_GEOPOSITION;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAPVIEW_BUNDLE_KEY;
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_DATE;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAP_LAYOUT_STATE_CONTRACTED;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAP_LAYOUT_STATE_EXPANDED;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_EVENT;
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_LOCATION;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToTimeString;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.getDistanceString;
 
-public class LookingForGameFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
+public class LookingForGameFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, View.OnClickListener {
 
     private static final String TAG = "LookingForGameFragment";
     private static final double BOUNDARY_MARGIN = .01;
@@ -60,15 +72,40 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
 
     //views
     private MapView mMapView;
+    private RelativeLayout mMapContainer, mFormContainer;
+    private ImageButton mExpandButton;
+
+    private Spinner mSystemSpinner, mExpSpinner;
+    private Button mFilterButton;
+    private TextView mDistanceText, mDateLowText, mDateUpText;
+    private CardView mDistanceLeftCard, mDistanceRightCard, mDateLow, mDateUp;
+    private Switch mSystemSwitch, mExpSwitch, mDistanceSwitch, mDateSwitch;
+    private ProgressBar mProgressBar, mProgressBarMap;
+
 
     //Vars
     private GoogleMap mGoogleMap;
     private LatLngBounds mMapBounds;
     private ParcableUserPosition mUserPosition;
-    private ArrayList<Event> mEvents = new ArrayList<>();
+    private ArrayList<Event> mAllEvents = new ArrayList<>();
+    private ArrayList<Event> mFilteredEvents = new ArrayList<>();
     private ClusterManager mClusterManager;
     private MyClusterManagerRenderer mClusterManagerRenderer;
     private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
+    private ExpierienceLevelMap expLevelMap;
+
+    private ArrayAdapter<CharSequence> mSystemAdapter, mExpAdapter;
+
+    //Flags
+    private int mMapLayoutState = MAP_LAYOUT_STATE_CONTRACTED;
+    private boolean mIsFiltered = false;
+
+    //Init Filter Values
+    private double mCurrentDistance = 0.0;
+    private String mCurrentGame;
+    private Date mCurrentLowDate;
+    private Date mCurrentUpDate;
+
 
     private void initGoogleMap(Bundle savedInstanceState) {
 
@@ -97,9 +134,83 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_looking_for_game, container, false);
         mMapView = view.findViewById(R.id.lfg_map);
+        mMapContainer = view.findViewById(R.id.lfg_map_container);
+        mFormContainer = view.findViewById(R.id.lfg_form_container);
+        mExpandButton = view.findViewById(R.id.lfg_exp_button);
+        mExpandButton.setOnClickListener(this);
+        expLevelMap = ExpierienceLevelMap.newInstance(getActivity());
+
+
+        initDefaultValues();
+        initForm(view);
+        initListeners();
+
         initGoogleMap(savedInstanceState);
 
         return view;
+    }
+
+    private void initDefaultValues() {
+        mCurrentLowDate = new Date();
+        mCurrentUpDate = new Date();
+        mCurrentGame = getString(R.string.system_default);
+    }
+
+
+    private void initForm(View view) {
+        mSystemSpinner = view.findViewById(R.id.filter_system);
+        mExpSpinner = view.findViewById(R.id.filter_exp);
+        mFilterButton = view.findViewById(R.id.filter_button);
+        mDistanceText = view.findViewById(R.id.filter_distance_text);
+        mDistanceLeftCard = view.findViewById(R.id.filter_distance_left_card);
+        mDistanceRightCard = view.findViewById(R.id.filter_distance_right_card);
+        mDateLowText = view.findViewById(R.id.filter_date_low_text);
+        mDateUpText = view.findViewById(R.id.filter_date_up_text);
+        mDateLow = view.findViewById(R.id.filter_date_low);
+        mDateUp = view.findViewById(R.id.filter_date_up);
+        mDateSwitch = view.findViewById(R.id.filter_switch_date);
+        mExpSwitch = view.findViewById(R.id.filter_switch_exp);
+        mSystemSwitch = view.findViewById(R.id.filter_switch_systems);
+        mDistanceSwitch = view.findViewById(R.id.filter_switch_distance);
+        mProgressBar = view.findViewById(R.id.filter_progressbar);
+        mProgressBarMap = view.findViewById(R.id.lfg_progressbar);
+
+
+        initSpinners();
+
+        initFormWithDefaultData();
+    }
+
+    private void initSpinners() {
+        initSystemSpinner();
+        initExpSpinner();
+    }
+
+    private void initSystemSpinner() {
+        mSystemAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.game_systems, android.R.layout.simple_spinner_item);
+        mSystemAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.game_systems, android.R.layout.simple_spinner_item);
+        mSystemAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSystemSpinner.setAdapter(mSystemAdapter);
+
+    }
+
+    private void initExpSpinner() {
+        mExpAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.exp_levels_short, android.R.layout.simple_spinner_item);
+        mExpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mExpSpinner.setAdapter(mExpAdapter);
+    }
+
+    private void initFormWithDefaultData() {
+        updateDateLowText(mCurrentLowDate);
+        updateDateUpText(mCurrentUpDate);
+    }
+
+    private void updateDateLowText(Date date) {
+        mDateLowText.setText(dateToDateString(date));
+    }
+
+    private void updateDateUpText(Date date) {
+        mDateUpText.setText(dateToDateString(date));
     }
 
 
@@ -180,7 +291,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                                 //TODO: Dodac jako warunek wyswietlania tylko tych w przyszlosci...
                                 //if (currentDateTime > event.getDate().getTime()) {
                                 Log.d(TAG, "onComplete: =>Document " + document.getId() + "received, adding");
-                                mEvents.add(document.toObject(Event.class));
+                                mAllEvents.add(document.toObject(Event.class));
                                 //}
                             }
                             placeMarkersOnMap();
@@ -210,7 +321,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         }
         Log.d(TAG, "placeMarkersOnMap: End of Clusters preparation");
 
-        for (Event event : mEvents) {
+        for (Event event : mAllEvents) {
             try {
                 ClusterMarker newClusterMarker = new ClusterMarker(
                         new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()),
@@ -307,8 +418,8 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
 
     private void updateEventsArray(Event event) {
         Log.d(TAG, "updateEventsArray: Trying to update array");
-        Log.d(TAG, "updateEventsArray: mEvents Array size before: " + mEvents.size());
-        for (Event e : mEvents) {
+        Log.d(TAG, "updateEventsArray: mAllEvents Array size before: " + mAllEvents.size());
+        for (Event e : mAllEvents) {
             if (event.getId().equals(e.getId())) {
                 Log.d(TAG, "updateEventsArray: Event" + e.getId() + "has users: " + e.getParticipants().size() + " before");
                 e.setParticipants(event.getParticipants());
@@ -317,8 +428,255 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
 
             }
         }
-        Log.d(TAG, "updateEventsArray: mEvents Array size after: " + mEvents.size());
-
-
+        Log.d(TAG, "updateEventsArray: mAllEvents Array size after: " + mAllEvents.size());
     }
+
+    private void expandMapAnimation() {
+        ViewWeightAnimationWrapper mapAnimationWrapper = new ViewWeightAnimationWrapper(mMapContainer);
+        ObjectAnimator mapAnimation = ObjectAnimator.ofFloat(mapAnimationWrapper,
+                "weight",
+                50,
+                100);
+        mapAnimation.setDuration(800);
+
+        ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(mFormContainer);
+        ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
+                "weight",
+                50,
+                0);
+        recyclerAnimation.setDuration(800);
+
+        recyclerAnimation.start();
+        mapAnimation.start();
+    }
+
+    private void contractMapAnimation() {
+        ViewWeightAnimationWrapper mapAnimationWrapper = new ViewWeightAnimationWrapper(mMapContainer);
+        ObjectAnimator mapAnimation = ObjectAnimator.ofFloat(mapAnimationWrapper,
+                "weight",
+                100,
+                50);
+        mapAnimation.setDuration(800);
+
+        ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(mFormContainer);
+        ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
+                "weight",
+                0,
+                50);
+        recyclerAnimation.setDuration(800);
+
+        recyclerAnimation.start();
+        mapAnimation.start();
+    }
+
+    private void showProgressBar() {
+        if (mProgressBar.getVisibility() == View.INVISIBLE) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        if (mProgressBarMap.getVisibility() == View.INVISIBLE) {
+            mProgressBarMap.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideProgressBar() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mProgressBarMap.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.lfg_exp_button: {
+                if (mMapLayoutState == MAP_LAYOUT_STATE_CONTRACTED) {
+                    mMapLayoutState = MAP_LAYOUT_STATE_EXPANDED;
+                    expandMapAnimation();
+                } else if (mMapLayoutState == MAP_LAYOUT_STATE_EXPANDED) {
+                    mMapLayoutState = MAP_LAYOUT_STATE_CONTRACTED;
+                    contractMapAnimation();
+                }
+                break;
+            }
+        }
+    }
+
+
+    //TODO:
+    // Pamiętać, żeby przed wrzuceniem do bazy albo pobieraniem z bazy castować poziomy trudności!!!!!
+    private void initListeners() {
+        mDistanceLeftCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCurrentDistance < 50) {
+                    mCurrentDistance++;
+                    updateDistanceText(mCurrentDistance);
+                }
+            }
+        });
+
+        mDistanceRightCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCurrentDistance > 0) {
+                    mCurrentDistance--;
+                    updateDistanceText(mCurrentDistance);
+                }
+
+            }
+        });
+
+        mDateLow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Dialog z datą!
+                ToastMaker.shortToast(getActivity(), "Here will pop up dialog");
+            }
+        });
+
+        mDateUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Dialog z datą
+                ToastMaker.shortToast(getActivity(), "Here will pop up dialog");
+            }
+        });
+
+        mFilterButton.setOnClickListener(onFilterClickListener());
+    }
+
+    private View.OnClickListener onFilterClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProgressBar();
+                Log.d(TAG, "onClick: FILTERING!");
+                boolean system = mSystemSwitch.isChecked();
+                boolean exp = mExpSwitch.isChecked();
+                boolean distance = mDistanceSwitch.isChecked();
+                boolean date = mDateSwitch.isChecked();
+                boolean validation = false;
+
+
+                if (!system && !exp && !distance && !date) {
+                    ToastMaker.shortToast(getActivity(), "You need to choose at least one filter");
+                } else {
+                    validation = checkValidation(system, exp, distance, date);
+                }
+
+                if (validation) {
+                    Log.d(TAG, "onClick: Validation success");
+                    mFilteredEvents = filterEvents(mAllEvents, system, exp, distance, date);
+                    mIsFiltered = true;
+
+
+                    //Checking
+                    Log.d(TAG, "onClick: Filtered list");
+                    Log.d(TAG, "onClick: -----BEFORE------");
+                    for (Event e : mAllEvents) {
+                        Log.d(TAG, "onClick: Event: => " + e.getId());
+                    }
+                    Log.d(TAG, "onClick: -----AFTER------");
+                    for (Event e : mFilteredEvents) {
+                        Log.d(TAG, "onClick: Event: => " + e.getId());
+                    }
+                    //-------------------------
+                    //Na koniec zmienic logikę na zbieranie iformacji z filtrowanych
+                } else {
+                    Log.d(TAG, "onClick: validation unsuccess");
+                }
+
+                hideProgressBar();
+            }
+        };
+    }
+
+    private boolean checkValidation(boolean system, boolean exp, boolean distance, boolean date) {
+        if (system) {
+            if (!checkSystemSpinnerOK()) {
+                ToastMaker.shortToast(getActivity(), "Choose system to filter");
+                return false;
+            }
+        }
+        if (exp) {
+            if (!checkExpSpinnerOK()) {
+                ToastMaker.shortToast(getActivity(), "Choose min exp to filter");
+                return false;
+            }
+        }
+        if (distance) {
+            if (!checkDistanceOK()) {
+                ToastMaker.shortToast(getActivity(), "Choose distance to filter");
+                return false;
+            }
+        }
+        if (date) {
+            if (!isDateOK()) {
+                Toast.makeText(getActivity(), "Give real and correct time bounds", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+
+        Log.d(TAG, "checkValidation: Filter form validation success");
+        return true;
+    }
+
+    private boolean isDateOK() {
+        Date date = new Date();
+
+        if (mCurrentLowDate.getTime() < date.getTime() || mCurrentUpDate.getTime() < date.getTime())
+            return false;
+
+        return mCurrentUpDate.getTime() > mCurrentLowDate.getTime();
+    }
+
+    private boolean checkDistanceOK() {
+        return mCurrentDistance > 0 && mCurrentDistance < 50;
+    }
+
+    private boolean checkExpSpinnerOK() {
+        return !mExpSpinner.getSelectedItem().toString().equals(getString(R.string.header_exp_levels));
+    }
+
+    private ArrayList<Event> filterEvents(List<Event> events, boolean bySystem, boolean byExp, boolean byDistance, boolean byDate) {
+        Log.d(TAG, "filterEvents: Events size before filter: " + events.size());
+        ArrayList<Event> newEventList = new ArrayList<>(events);
+
+
+        if (bySystem) {
+            String system = mSystemSpinner.getSelectedItem().toString();
+            for (Event event : events) {
+                if (!event.getSystem().equals(system)) {
+                    newEventList.remove(event);
+                }
+            }
+        }
+
+        if (byExp) {
+            //TODO: Filtrowanie poziom w gore...
+        }
+
+        if (byDistance) {
+            //TODO: Filtorwanie po odległosci, trzeba liczyc latlong do kazdego
+        }
+        if (byDate) {
+            for (Event event : newEventList) {
+                if (!(event.getDate().getTime() > mCurrentLowDate.getTime() && event.getDate().getTime() < mCurrentUpDate.getTime())) {
+                    newEventList.remove(event);
+                }
+            }
+        }
+
+        Log.d(TAG, "filterEvents: Events size after filter: " + newEventList.size());
+        return newEventList;
+    }
+
+    private boolean checkSystemSpinnerOK() {
+        return !mSystemSpinner.getSelectedItem().toString().equals(getString(R.string.header_game_systems));
+    }
+
+    private void updateDistanceText(double distance) {
+        mDistanceText.setText(getDistanceString(getActivity(), distance));
+    }
+
+
 }

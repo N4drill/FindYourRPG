@@ -12,7 +12,8 @@ abstract public class Constants {
     public static final int REQUEST_EVENT = 3;
 
 
-
+    public static final int MAP_LAYOUT_STATE_CONTRACTED = 50;
+    public static final int MAP_LAYOUT_STATE_EXPANDED = 51;
 
     public static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     public static final String DIALOG_MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";

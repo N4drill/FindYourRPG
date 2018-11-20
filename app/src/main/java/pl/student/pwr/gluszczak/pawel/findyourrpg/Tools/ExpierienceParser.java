@@ -14,10 +14,11 @@ public abstract class ExpierienceParser {
      * @param level
      * @return
      */
-    public static String expierienceNameParser(Context context, String level) {
+    public static String expierienceNameParserLongToShort(Context context, String level) {
         ExpierienceLevelMap expierienceLevelMap = ExpierienceLevelMap.newInstance(context);
 
         return expierienceLevelMap.getLevelMapping().get(level);
     }
+
 
 }

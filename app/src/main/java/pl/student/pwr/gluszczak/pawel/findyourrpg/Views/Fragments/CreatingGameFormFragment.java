@@ -494,18 +494,18 @@ public class CreatingGameFormFragment extends Fragment {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             mCurrentDate = date;
-            mCurrentHour = calendar.get(Calendar.HOUR) + 1;
+            mCurrentHour = calendar.get(Calendar.HOUR);
             mCurrentMin = calendar.get(Calendar.MINUTE);
             return calendar;
         }
 
         @Override
         protected void onPostExecute(Calendar calendar) {
-            updateTimeButtonText(calendar.get(Calendar.HOUR) + 1, calendar.get(Calendar.MINUTE));
+            updateTimeButtonText(calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE));
             updateDateButtonText(
                     new GregorianCalendar(
                             calendar.get(Calendar.YEAR),
-                            calendar.get(Calendar.MONTH) + 1,
+                            calendar.get(Calendar.MONTH),
                             calendar.get(Calendar.DAY_OF_MONTH))
                             .getTime());
 

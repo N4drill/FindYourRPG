@@ -1,9 +1,13 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Tools;
 
+import android.content.Context;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
+
+import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 
 public abstract class TextFormat {
 
@@ -33,18 +37,19 @@ public abstract class TextFormat {
     public static String dateToDateString(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        return "" + calendar.get(Calendar.DAY_OF_MONTH) + "." + calendar.get(Calendar.MONTH);
+        return "" + (calendar.get(Calendar.DAY_OF_MONTH)) + "." + calendar.get(Calendar.MONTH);
     }
 
 
     /**
      * Concat hour and min ints into proper string format
      *
-     * @param hour
+     * @param hourI
      * @param min
      * @return
      */
-    public static String hourMinToString(int hour, int min) {
+    public static String hourMinToString(int hourI, int min) {
+        int hour = hourI + 1;
         StringBuilder builder = new StringBuilder();
         builder.append(hour < 10 ? "0" + hour : hour);
         builder.append(":");
@@ -80,6 +85,26 @@ public abstract class TextFormat {
      */
     public static String playersNeededLeft(int needed, int current) {
         return "" + current + "/" + needed;
+    }
+
+    /**
+     * Generates a string with proper distance unit
+     *
+     * @param distance
+     * @return
+     */
+    public static String getDistanceString(Context context, int distance) {
+        return "" + String.valueOf(distance) + context.getApplicationContext().getString(R.string.distance_unit);
+    }
+
+    /**
+     * Generates a string with proper distance unit
+     *
+     * @param distance
+     * @return
+     */
+    public static String getDistanceString(Context context, double distance) {
+        return "" + String.valueOf(distance) + context.getApplicationContext().getString(R.string.distance_unit);
     }
 
 }

@@ -29,6 +29,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="login_register">Register</string>
     <string name="form_set_date">Set date</string>
     <string name="form_set_time">Set time</string>
+    <string name="distance_unit">km</string>
 
 
     <!-- Event details dialogs -->
@@ -78,6 +79,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="header_game_systems">Choose game system</string>
     <string name="header_exp_levels_min">Choose min level</string>
     <string name="header_exp_levels_recommended">Choose recommended level</string>
+    <string name="header_exp_levels">Choose level</string>
     <string name="header_players_needed">Choose players needed</string>
 
     <!-- Spinners arrays -->
@@ -111,6 +113,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
         <item>@string/exp_3</item>
         <item>@string/exp_4</item>
         <item>@string/exp_5</item>
+    </string-array>
+
+    <string-array name="exp_levels_short">
+        <item>@string/header_exp_levels</item>
+        <item>@string/exp_1_s</item>
+        <item>@string/exp_2_s</item>
+        <item>@string/exp_3_s</item>
+        <item>@string/exp_4_s</item>
+        <item>@string/exp_5_s</item>
     </string-array>
 
 
