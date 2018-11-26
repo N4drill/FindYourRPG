@@ -1,6 +1,5 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,16 +22,16 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.CreatingAdapter;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.ParticipatingAdapter;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.GameCreatingFormActivity;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseFragmentCreator;
 
-public class CreatingGameFragment extends BaseFragmentCreator {
+public class GamesUserParticipateFragment extends BaseFragmentCreator {
 
-    private static final String TAG = "CreatingGameFragment";
+    private static final String TAG = "GamesUserParticipateFra";
 
     //Views
     private Button mNextButton;
@@ -41,9 +40,8 @@ public class CreatingGameFragment extends BaseFragmentCreator {
 
 
     //Vars
-    private CreatingAdapter mCreatingAdapter;
+    private ParticipatingAdapter mParticipatingAdapter;
     private ArrayList<Event> mEvents = new ArrayList<>();
-
 
 
     @Override
@@ -54,6 +52,7 @@ public class CreatingGameFragment extends BaseFragmentCreator {
     @Override
     protected void initializeComponents(View view) {
         mNextButton = view.findViewById(R.id.createF_next_button);
+        mNextButton.setVisibility(View.INVISIBLE);
         mRecyclerView = view.findViewById(R.id.createF_recycler);
         mProgressBar = view.findViewById(R.id.createF_progressBar);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -81,13 +80,13 @@ public class CreatingGameFragment extends BaseFragmentCreator {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             mEvents = new ArrayList<>();
-                            Date currentDateTime = new Date();
+                            long currentDateTime = new Date().getTime();
                             User currentUser = ((UserClient) (getActivity().getApplicationContext())).getUser();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Event event = document.toObject(Event.class);
                                 //TODO: Dodac jako warunek wyswietlania tylko tych w przyszlosci...
-                                if (currentDateTime.before(event.getDate())) {
-                                    if (currentUser.getId().equals(event.getGame_maser().getId())) {
+                                if (currentDateTime < event.getDate().getTime()) {
+                                    if (doesUserParticipate(currentUser, event)) {
                                         Log.d(TAG, "onComplete: =>Document " + document.getId() + "received, adding");
                                         mEvents.add(document.toObject(Event.class));
                                     }
@@ -104,6 +103,14 @@ public class CreatingGameFragment extends BaseFragmentCreator {
 
     }
 
+    private boolean doesUserParticipate(User currentUser, Event event) {
+        for (User user : event.getParticipants()) {
+            if (currentUser.getId().equals(user.getId()) && !currentUser.getId().equals(event.getGame_maser().getId()))
+                return true;
+        }
+        return false;
+    }
+
     private void hideProgressBar() {
         mProgressBar.setVisibility(View.INVISIBLE);
     }
@@ -117,20 +124,12 @@ public class CreatingGameFragment extends BaseFragmentCreator {
     private void updateAdapter() {
         hideProgressBar();
         Log.d(TAG, "updateAdapter: updating Adapter");
-        mCreatingAdapter = new CreatingAdapter(mEvents, getActivity());
-        mRecyclerView.setAdapter(mCreatingAdapter);
+        mParticipatingAdapter = new ParticipatingAdapter(mEvents, getActivity());
+        mRecyclerView.setAdapter(mParticipatingAdapter);
     }
 
     @Override
     protected void setOnClickListeners() {
-        mNextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: Running Form Activity");
-                Intent intent = new Intent(getActivity(), GameCreatingFormActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override

@@ -40,6 +40,7 @@ public class Event implements Parcelable, Comparable<Event> {
     public Event() {
     }
 
+
     protected Event(Parcel in) {
         id = in.readString();
         title = in.readString();

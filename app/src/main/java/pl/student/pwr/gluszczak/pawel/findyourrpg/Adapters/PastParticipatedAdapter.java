@@ -1,11 +1,7 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,48 +11,44 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.EventDetailsActivity;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.EventDetailsFragment;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PASS_EVENT;
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PASS_EVENT_DATE;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToTimeString;
 
-public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHolder> {
+public class PastParticipatedAdapter extends RecyclerView.Adapter<PastParticipatedAdapter.ViewHolder> {
 
-    private static final String TAG = "CreatingAdapter";
+    private static final String TAG = "PastParticipatedAdapter";
 
     private List<Event> mEvents;
     private Context mContext;
 
-    public CreatingAdapter(List<Event> events, Context context) {
+    public PastParticipatedAdapter(List<Event> events, Context context) {
         Log.d(TAG, "CreatingAdapter: ");
         Collections.sort(events);
         mEvents = events;
         mContext = context;
     }
 
+
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public PastParticipatedAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         Log.d(TAG, "onCreateViewHolder: ");
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.row_event, parent, false);
-        CreatingAdapter.ViewHolder viewHolder = new ViewHolder(view, mContext);
+        PastParticipatedAdapter.ViewHolder viewHolder = new PastParticipatedAdapter.ViewHolder(view, mContext);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull PastParticipatedAdapter.ViewHolder viewHolder, int position) {
         Log.d(TAG, "onBindViewHolder: ");
         Event event = mEvents.get(position);
         viewHolder.updateUI(event);
@@ -68,7 +60,6 @@ public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         private TextView title, date, time, system;
         private ImageView image;
         private SystemImagesMap systemMap;
@@ -100,14 +91,7 @@ public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHo
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*EventDetailsFragment eventDetailsFragment = EventDetailsFragment.newInstance(event);
-                    ((FragmentActivity) itemView.getContext()).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_fragment_container, eventDetailsFragment)
-                            .commit();*/
-                    Intent intent = new Intent(itemView.getContext(), EventDetailsActivity.class);
-                    intent.putExtra(PASS_EVENT, event);
-                    intent.putExtra(PASS_EVENT_DATE, event.getDate().getTime());
-                    itemView.getContext().startActivity(intent);
+                    ToastMaker.shortToast(mContext, "Click!");
                 }
             });
         }

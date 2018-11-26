@@ -6,7 +6,8 @@
     app:cardElevation="8dp"
     app:cardCornerRadius="8dp"
     android:layout_marginHorizontal="8dp"
-    android:layout_marginBottom="8dp">
+    android:layout_marginBottom="8dp"
+    android:id="@+id/row_event_card">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -14,7 +15,7 @@
 
         <TextView
             android:id="@+id/row_event_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -22,6 +23,13 @@
             android:layout_marginTop="16dp"
             android:textSize="28sp"
             android:text="Title"
+            android:layout_toLeftOf="@id/row_event_image"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
             android:textStyle="bold" />
 
         <TextView
@@ -65,5 +73,15 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:layout_marginHorizontal="16dp"
             android:layout_toRightOf="@id/row_event_time" />
+
+        <ImageView
+            android:id="@+id/row_event_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/system_placeholder" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

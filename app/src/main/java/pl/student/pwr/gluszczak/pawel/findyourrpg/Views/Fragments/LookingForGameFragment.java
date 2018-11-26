@@ -51,16 +51,20 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ClusterMarker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.ParcableUserPosition;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.MyClusterManagerRenderer;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ViewWeightAnimationWrapper;
 
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.compareDates;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isToday;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.LOOKING_FOR_GAME_BUNDLE_GEOPOSITION;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAPVIEW_BUNDLE_KEY;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAP_LAYOUT_STATE_CONTRACTED;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAP_LAYOUT_STATE_EXPANDED;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_DATE;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_EVENT;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.LatLngParser.calculateDistance;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToTimeString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.getDistanceString;
@@ -94,7 +98,8 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private ClusterManager mClusterManager;
     private MyClusterManagerRenderer mClusterManagerRenderer;
     private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
-    private ExpierienceLevelMap expLevelMap;
+    private ExpierienceLevelMap mExpLevelMap;
+    private SystemImagesMap mImagesMap;
 
     private ArrayAdapter<CharSequence> mSystemAdapter, mExpAdapter;
 
@@ -128,6 +133,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO: TO TRZEBA INACZEJ POBIERAC!
         mUserPosition = getArguments().getParcelable(LOOKING_FOR_GAME_BUNDLE_GEOPOSITION);
 
 
@@ -142,7 +148,8 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         mFormContainer = view.findViewById(R.id.lfg_form_container);
         mExpandButton = view.findViewById(R.id.lfg_exp_button);
         mExpandButton.setOnClickListener(this);
-        expLevelMap = ExpierienceLevelMap.newInstance(getActivity());
+        mExpLevelMap = ExpierienceLevelMap.newInstance(getActivity());
+        mImagesMap = SystemImagesMap.newInstance(getActivity());
 
 
         initDefaultValues();
@@ -350,7 +357,8 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                 event.getTitle(),
                 dateToDateString(event.getDate()) + ", " + dateToTimeString(event.getDate()),
                 //TODO: Replace with user icon...
-                R.drawable.ic_placeholder,
+                //R.drawable.ic_placeholder,
+                mImagesMap.getImageForSystem(event.getSystem()),
                 event
         );
     }
@@ -692,9 +700,10 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         Date date = new Date();
 
         if (mCurrentLowDate.getTime() < date.getTime() || mCurrentUpDate.getTime() < date.getTime())
-            return false;
-
-        return mCurrentUpDate.getTime() > mCurrentLowDate.getTime();
+            if (!isToday(mCurrentLowDate) || !isToday(mCurrentUpDate)) {
+                return false;
+            }
+        return mCurrentUpDate.getTime() >= mCurrentLowDate.getTime();
     }
 
     private boolean checkDistanceOK() {
@@ -714,23 +723,46 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
             String system = mSystemSpinner.getSelectedItem().toString();
             for (Event event : events) {
                 if (!event.getSystem().equals(system)) {
-                    // newEventList.remove(event);
                     eventsToRemove.add(event);
                 }
             }
         }
 
         if (byExp) {
-            //TODO: Filtrowanie poziom w gore...
+            Log.d(TAG, "filterEvents: Filtering by exp");
+            int current = mExpLevelMap.getValueOfLevel(mExpSpinner.getSelectedItem().toString());
+            for (Event event : events) {
+                // If level of event is below min level, remove
+                int value = mExpLevelMap.getValueOfLevel(mExpLevelMap.getLevelMappedToShort(event.getMin_exp()));
+                if (value < current) {
+                    eventsToRemove.add(event);
+                }
+            }
         }
 
         if (byDistance) {
-            //TODO: Filtorwanie po odległosci, trzeba liczyc latlong do kazdego
+            //TODO: Check It, bug
+            //sqrt((x2-x1)^2 + (y2-y1)^2)
+            //lat deg = 110.574 km
+            //long deg = 111.320*cos(lat) km
+            double chosenDistance = mCurrentDistance;
+            for (Event event : events) {
+                double distance = calculateDistance(event.getLocalization().getLatitude(),
+                        mUserPosition.getGeoPoint().getLatitude(),
+                        event.getLocalization().getLongitude(),
+                        mUserPosition.getGeoPoint().getLongitude()
+                );
+
+                if (distance < chosenDistance) {
+                    eventsToRemove.add(event);
+                }
+            }
+
         }
         if (byDate) {
             for (Event event : newEventList) {
                 if (!(event.getDate().getTime() > mCurrentLowDate.getTime() && event.getDate().getTime() < mCurrentUpDate.getTime())) {
-                    //newEventList.remove(event);
+                    //if (compareDates(mCurrentLowDate, event.getDate()) >= 0 && compareDates(mCurrentUpDate, event.getDate()) <= 0) {  //TODO: Method to repair
                     eventsToRemove.add(event);
                 }
             }

@@ -9,6 +9,12 @@
             android:id="@+id/nav_create"
             android:title="@string/option_create"
             android:icon="@drawable/ic_create" />
+
+        <item
+            android:id="@+id/nav_participate"
+            android:title="@string/option_participate"
+            android:icon="@drawable/ic_create" />
+
         <item
             android:id="@+id/nav_players"
             android:title="@string/option_find_player"
@@ -17,7 +23,23 @@
             android:id="@+id/nav_library"
             android:title="@string/option_library"
             android:icon="@drawable/ic_library" />
+
     </group>
+
+    <item android:title="Past games">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/nav_past_created"
+                    android:title="@string/option_organized"
+                    android:icon="@drawable/face_placeholder" />
+                <item
+                    android:id="@+id/nav_past_participated"
+                    android:title="@string/option_participated"
+                    android:icon="@drawable/face_placeholder" />
+            </group>
+        </menu>
+    </item>
 
     <item android:title="User">
         <menu>
@@ -34,5 +56,6 @@
         </menu>
 
     </item>
+
 
 </menu>

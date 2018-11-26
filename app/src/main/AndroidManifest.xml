@@ -29,6 +29,7 @@
         <activity android:name=".Views.Activities.MainScreenActivity" />
         <activity android:name=".Views.Activities.RegisterActivity" />
         <activity android:name=".Views.Activities.GameCreatingFormActivity"></activity>
+        <activity android:name=".Views.Activities.EventDetailsActivity"></activity>
 
 
         <meta-data

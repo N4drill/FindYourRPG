@@ -195,7 +195,7 @@ public class CreatingGameFormFragment extends Fragment {
                     Log.d(TAG, "onComplete: Successfull operation");
                     Log.d(TAG, "onComplete: ----------------------------");
                     ToastMaker.shortToast(getActivity(), "SAVED EVENT!");
-
+                    getActivity().finish();
 
                 } else {
                     Log.d(TAG, "onComplete: Couldn't save event");

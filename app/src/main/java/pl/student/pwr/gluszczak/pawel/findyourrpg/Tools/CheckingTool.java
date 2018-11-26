@@ -119,4 +119,49 @@ abstract public class CheckingTool {
 
         return expLevels.indexOf(first) <= expLevels.indexOf(second);
     }
+
+    /**
+     * Returns -1 if toCompare is earlier than current, 0 if is same day, 1 if later
+     *
+     * @param currentDate
+     * @param toCompare
+     * @return
+     */
+    public static int compareDates(Date currentDate, Date toCompare) {
+        Calendar currentCalendar = Calendar.getInstance();
+        Calendar toCompareCalendar = Calendar.getInstance();
+        currentCalendar.setTime(currentDate);
+        toCompareCalendar.setTime(toCompare);
+
+        if (currentCalendar.get(Calendar.YEAR) <= toCompareCalendar.get(Calendar.YEAR)) {
+            if (currentCalendar.get(Calendar.YEAR) == toCompareCalendar.get(Calendar.YEAR)) {
+                if (currentCalendar.get(Calendar.MONTH) <= toCompareCalendar.get(Calendar.MONTH)) {
+                    if (currentCalendar.get(Calendar.MONTH) == toCompareCalendar.get(Calendar.MONTH)) {
+                        if (currentCalendar.get(Calendar.DAY_OF_MONTH) < toCompareCalendar.get(Calendar.DAY_OF_MONTH)) {
+                            //Same year, same month, day in future
+                            return 1;
+                        } else if (currentCalendar.get(Calendar.DAY_OF_MONTH) > toCompareCalendar.get(Calendar.DAY_OF_MONTH)) {
+                            //Same year, same month, day in past
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        //Same year, month later
+                        return 1;
+                    }
+                } else {
+                    //Same year, month in past
+                    return -1;
+                }
+            } else {
+                //Years later
+                return 1;
+            }
+
+        } else {
+            //Year in the past
+            return -1;
+        }
+    }
 }

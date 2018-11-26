@@ -81,6 +81,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="header_exp_levels_recommended">Choose recommended level</string>
     <string name="header_exp_levels">Choose level</string>
     <string name="header_players_needed">Choose players needed</string>
+    <string name="player_rank_1">Creativity</string>
+    <string name="player_rank_2">Behaviour</string>
+    <string name="player_rank_3">Game feel</string>
+    <string name="master_rank_1">Creativity</string>
+    <string name="master_rank_2">Behaviour</string>
+    <string name="master_rank_3">Game feel</string>
+    <string name="option_participate">You participate</string>
+    <string name="option_organized">Organized</string>
+    <string name="option_participated">Participated</string>
 
     <!-- Spinners arrays -->
 

@@ -30,11 +30,16 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.FragmentHelper;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.LoginActivity;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.CreatingGameFragment;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.GamesUserParticipateFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LibraryFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LookingForGameFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.LookingForPlayersFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.MainMenuFragment;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.PastGamesUserCreatedFragment;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.PastGamesUserParticipatedFragment;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments.ProfileFragment;
+
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PASS_USER;
 
 public abstract class SinglePageActivityWithNav extends AppCompatActivity {
 
@@ -146,6 +151,15 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
                 break;
             case R.id.nav_profile:
                 className = ProfileFragment.class;
+                break;
+            case R.id.nav_participate:
+                className = GamesUserParticipateFragment.class;
+                break;
+            case R.id.nav_past_participated:
+                className = PastGamesUserParticipatedFragment.class;
+                break;
+            case R.id.nav_past_created:
+                className = PastGamesUserCreatedFragment.class;
                 break;
             case R.id.nav_logout:
                 signOut();

@@ -20,6 +20,10 @@ abstract public class Constants {
 
     public static final String LOOKING_FOR_GAME_BUNDLE_GEOPOSITION = "BundlePosition";
 
+    public static final String PASS_USER = "UserPass";
+    public static final String PASS_EVENT = "EventPass";
+    public static final String PASS_EVENT_DATE = "EventPassDate";
+
 
     public static final double DEFAULT_LATITUDE = 51.107883;
     public static final double DEFAULT_LONGITUDE = 17.038538;

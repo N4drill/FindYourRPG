@@ -54,4 +54,8 @@ abstract public class UserUtils {
         return (((a + b + c) / 3) + ((a2 + b2 + c2) / 3)) / 2;
     }
 
+    public static int calculateUserGames(User user) {
+        return user.getGamesAsMaster() + user.getGamesAsPlayer();
+    }
+
 }

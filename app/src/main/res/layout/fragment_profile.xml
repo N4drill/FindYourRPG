@@ -215,7 +215,7 @@
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
                         android:textColor="@color/white"
-                        android:text="Creativity:"
+                        android:text="@string/player_rank_1"
                         android:textSize="@dimen/profile_stats_value_default" />
 
                     <TextView
@@ -238,7 +238,7 @@
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
                         android:textColor="@color/white"
-                        android:text="Behaviour:"
+                        android:text="@string/player_rank_2"
                         android:textSize="@dimen/profile_stats_value_default" />
 
                     <TextView
@@ -260,7 +260,7 @@
                         android:layout_below="@+id/profile_rank_2"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Creativity:"
+                        android:text="@string/player_rank_3"
                         android:textSize="@dimen/profile_stats_value_default" />
 
                     <TextView
@@ -321,7 +321,7 @@
                         android:layout_below="@+id/profile_rank_rating_master"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Creativity:"
+                        android:text="@string/master_rank_1"
                         android:textSize="@dimen/profile_stats_value_default" />
 
                     <TextView
@@ -343,7 +343,7 @@
                         android:layout_marginLeft="8dp"
                         android:textColor="@color/white"
                         android:layout_marginTop="8dp"
-                        android:text="Behaviour:"
+                        android:text="@string/master_rank_2"
                         android:textSize="@dimen/profile_stats_value_default" />
 
                     <TextView
@@ -364,7 +364,7 @@
                         android:layout_below="@+id/profile_rank_2_master"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Creativity:"
+                        android:text="@string/master_rank_3"
                         android:textColor="@color/white"
                         android:textSize="@dimen/profile_stats_value_default" />
 
