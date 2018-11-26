@@ -59,6 +59,7 @@ import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.LOOKING
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAPVIEW_BUNDLE_KEY;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAP_LAYOUT_STATE_CONTRACTED;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAP_LAYOUT_STATE_EXPANDED;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_DATE;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_EVENT;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToTimeString;
@@ -69,6 +70,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private static final String TAG = "LookingForGameFragment";
     private static final double BOUNDARY_MARGIN = .01;
     private static final String DIALOG_EVENT = "DialogEvent";
+    private static final String DIALOG_DATE = "DialogDate";
 
     //views
     private MapView mMapView;
@@ -76,8 +78,8 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private ImageButton mExpandButton;
 
     private Spinner mSystemSpinner, mExpSpinner;
-    private Button mFilterButton;
-    private TextView mDistanceText, mDateLowText, mDateUpText;
+    private Button mFilterButton, mDistanceLeftButton, mDistanceRightButton, mResetButton;
+    private TextView mDistanceText, mDateLowText, mDateUpText, mCounter;
     private CardView mDistanceLeftCard, mDistanceRightCard, mDateLow, mDateUp;
     private Switch mSystemSwitch, mExpSwitch, mDistanceSwitch, mDateSwitch;
     private ProgressBar mProgressBar, mProgressBarMap;
@@ -99,6 +101,8 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     //Flags
     private int mMapLayoutState = MAP_LAYOUT_STATE_CONTRACTED;
     private boolean mIsFiltered = false;
+    private boolean mUpDateClicked = false;
+    private boolean mLowDateClicked = false;
 
     //Init Filter Values
     private double mCurrentDistance = 0.0;
@@ -174,6 +178,10 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         mDistanceSwitch = view.findViewById(R.id.filter_switch_distance);
         mProgressBar = view.findViewById(R.id.filter_progressbar);
         mProgressBarMap = view.findViewById(R.id.lfg_progressbar);
+        mDistanceLeftButton = view.findViewById(R.id.filter_distance_left_button);
+        mDistanceRightButton = view.findViewById(R.id.filter_distance_right_button);
+        mResetButton = view.findViewById(R.id.filter_reset_button);
+        mCounter = view.findViewById(R.id.lfg_counter);
 
 
         initSpinners();
@@ -323,14 +331,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
 
         for (Event event : mAllEvents) {
             try {
-                ClusterMarker newClusterMarker = new ClusterMarker(
-                        new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()),
-                        event.getTitle(),
-                        dateToDateString(event.getDate()) + ", " + dateToTimeString(event.getDate()),
-                        //TODO: Replace with user icon...
-                        R.drawable.ic_placeholder,
-                        event
-                );
+                ClusterMarker newClusterMarker = createCluster(event);
 
                 mClusterManager.addItem(newClusterMarker);
                 mClusterMarkers.add(newClusterMarker);
@@ -339,6 +340,38 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                 Log.d(TAG, "placeMarkersOnMap: NullPointerException " + ex.getMessage());
             }
         }
+        mCounter.setText(String.valueOf(mClusterMarkers.size()));
+        mClusterManager.cluster();
+    }
+
+    private ClusterMarker createCluster(Event event) {
+        return new ClusterMarker(
+                new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()),
+                event.getTitle(),
+                dateToDateString(event.getDate()) + ", " + dateToTimeString(event.getDate()),
+                //TODO: Replace with user icon...
+                R.drawable.ic_placeholder,
+                event
+        );
+    }
+
+    private void updateClusters(List<Event> events) {
+        for (ClusterMarker clusterMarker : mClusterMarkers) {
+            mClusterManager.removeItem(clusterMarker);
+        }
+        mClusterMarkers.clear();
+
+        for (Event event : events) {
+            try {
+                ClusterMarker newClusterMarker = createCluster(event);
+                mClusterManager.addItem(newClusterMarker);
+                mClusterMarkers.add(newClusterMarker);
+
+            } catch (NullPointerException ex) {
+                Log.d(TAG, "placeMarkersOnMap: NullPointerException " + ex.getMessage());
+            }
+        }
+        mCounter.setText(String.valueOf(mClusterMarkers.size()));
         mClusterManager.cluster();
     }
 
@@ -388,6 +421,21 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         if (requestCode == REQUEST_EVENT) {
             Event event = data.getParcelableExtra(EventDetailsDialogFragment.EXTRA_EVENT);
             updateDatabase(event);
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            if (mUpDateClicked) {
+                mCurrentUpDate = date;
+                mUpDateClicked = false;
+                updateDateUpText(date);
+            }
+            if (mLowDateClicked) {
+                mCurrentLowDate = date;
+                mLowDateClicked = false;
+                updateDateLowText(date);
+            }
+
         }
     }
 
@@ -504,7 +552,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     //TODO:
     // Pamiętać, żeby przed wrzuceniem do bazy albo pobieraniem z bazy castować poziomy trudności!!!!!
     private void initListeners() {
-        mDistanceLeftCard.setOnClickListener(new View.OnClickListener() {
+        mDistanceRightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCurrentDistance < 50) {
@@ -514,7 +562,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
             }
         });
 
-        mDistanceRightCard.setOnClickListener(new View.OnClickListener() {
+        mDistanceLeftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCurrentDistance > 0) {
@@ -528,20 +576,37 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         mDateLow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Dialog z datą!
-                ToastMaker.shortToast(getActivity(), "Here will pop up dialog");
+                mLowDateClicked = true;
+                FragmentManager manager = getFragmentManager();
+                DatePickerFragment dialog = DatePickerFragment.newInstance(new Date());
+                dialog.setTargetFragment(LookingForGameFragment.this, REQUEST_DATE);
+
+                dialog.show(manager, DIALOG_DATE);
             }
         });
 
         mDateUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Dialog z datą
-                ToastMaker.shortToast(getActivity(), "Here will pop up dialog");
+                mUpDateClicked = true;
+                FragmentManager manager = getFragmentManager();
+                DatePickerFragment dialog = DatePickerFragment.newInstance(new Date());
+                dialog.setTargetFragment(LookingForGameFragment.this, REQUEST_DATE);
+
+                dialog.show(manager, DIALOG_DATE);
             }
         });
 
         mFilterButton.setOnClickListener(onFilterClickListener());
+
+        mResetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIsFiltered = false;
+                mFilteredEvents.clear();
+                updateClusters(mAllEvents);
+            }
+        });
     }
 
     private View.OnClickListener onFilterClickListener() {
@@ -563,10 +628,13 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                     validation = checkValidation(system, exp, distance, date);
                 }
 
+                //Validation completed
                 if (validation) {
                     Log.d(TAG, "onClick: Validation success");
                     mFilteredEvents = filterEvents(mAllEvents, system, exp, distance, date);
                     mIsFiltered = true;
+
+                    updateClusters(mFilteredEvents);
 
 
                     //Checking
@@ -640,13 +708,14 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private ArrayList<Event> filterEvents(List<Event> events, boolean bySystem, boolean byExp, boolean byDistance, boolean byDate) {
         Log.d(TAG, "filterEvents: Events size before filter: " + events.size());
         ArrayList<Event> newEventList = new ArrayList<>(events);
-
+        ArrayList<Event> eventsToRemove = new ArrayList<>();
 
         if (bySystem) {
             String system = mSystemSpinner.getSelectedItem().toString();
             for (Event event : events) {
                 if (!event.getSystem().equals(system)) {
-                    newEventList.remove(event);
+                    // newEventList.remove(event);
+                    eventsToRemove.add(event);
                 }
             }
         }
@@ -661,12 +730,14 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         if (byDate) {
             for (Event event : newEventList) {
                 if (!(event.getDate().getTime() > mCurrentLowDate.getTime() && event.getDate().getTime() < mCurrentUpDate.getTime())) {
-                    newEventList.remove(event);
+                    //newEventList.remove(event);
+                    eventsToRemove.add(event);
                 }
             }
         }
 
         Log.d(TAG, "filterEvents: Events size after filter: " + newEventList.size());
+        newEventList.removeAll(eventsToRemove);
         return newEventList;
     }
 
