@@ -131,17 +131,17 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
     private void replaceFragmentWithOptionSelect(MenuItem menuItem) {
         Fragment fragment;
         Class className;
-        Bundle bundle = new Bundle();
+        //Bundle bundle = new Bundle();
         switch (menuItem.getItemId()) {
             case R.id.nav_create:
                 className = CreatingGameFragment.class;
                 break;
             case R.id.nav_looking:
                 className = LookingForGameFragment.class;
-                Bundle temp = lookingForGameBundlePackage();
-                if (temp != null) {
-                    bundle = temp;
-                }
+                //Bundle temp = lookingForGameBundlePackage();
+                //if (temp != null) {
+                //    bundle = temp;
+                //}
                 break;
             case R.id.nav_players:
                 className = LookingForPlayersFragment.class;
@@ -170,7 +170,7 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
         fragment = FragmentHelper.generateFragmentBasedOnClassName(className);
         if (fragment != null) {
 
-            fragment.setArguments(bundle);
+            //fragment.setArguments(bundle);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()

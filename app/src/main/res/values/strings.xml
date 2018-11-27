@@ -90,6 +90,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="option_participate">You participate</string>
     <string name="option_organized">Organized</string>
     <string name="option_participated">Participated</string>
+    <string name="event_detail_participator">Leave</string>
 
     <!-- Spinners arrays -->
 

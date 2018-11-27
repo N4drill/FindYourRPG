@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +27,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -38,6 +41,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.ClusterManager;
@@ -100,6 +104,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
     private ExpierienceLevelMap mExpLevelMap;
     private SystemImagesMap mImagesMap;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private ArrayAdapter<CharSequence> mSystemAdapter, mExpAdapter;
 
@@ -134,7 +139,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //TODO: TO TRZEBA INACZEJ POBIERAC!
-        mUserPosition = getArguments().getParcelable(LOOKING_FOR_GAME_BUNDLE_GEOPOSITION);
+        //mUserPosition = getArguments().getParcelable(LOOKING_FOR_GAME_BUNDLE_GEOPOSITION);
 
 
     }
@@ -150,6 +155,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         mExpandButton.setOnClickListener(this);
         mExpLevelMap = ExpierienceLevelMap.newInstance(getActivity());
         mImagesMap = SystemImagesMap.newInstance(getActivity());
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
 
         initDefaultValues();
@@ -166,7 +172,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         mCurrentUpDate = new Date();
         mCurrentGame = getString(R.string.system_default);
     }
-
 
     private void initForm(View view) {
         mSystemSpinner = view.findViewById(R.id.filter_system);
@@ -268,13 +273,38 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         map.setMyLocationEnabled(true);
         mGoogleMap = map;
         mGoogleMap.setOnInfoWindowClickListener(this);
-        setCameraView();
+        setUserPosition();
         showEventsOnMap();
 
     }
 
+    private void setUserPosition() {
+        Log.d(TAG, "getLastKnownLocation: called.");
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mFusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<android.location.Location>() {
+            @Override
+            public void onComplete(@NonNull Task<android.location.Location> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Attached location to bundle");
+                    Location location = task.getResult();
+                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                    mUserPosition = new ParcableUserPosition();
+                    mUserPosition.setGeoPoint(geoPoint);
+                    Log.d(TAG, "onComplete: ----------------------------------------");
+                    Log.d(TAG, "onComplete: Done attaching location to bundle with geoPoint: " + mUserPosition.getGeoPoint().getLatitude() + ", " + mUserPosition.getGeoPoint().getLongitude());
+                    Log.d(TAG, "onComplete: ----------------------------------------");
+
+                    setCameraView();
+                }
+            }
+        });
+    }
+
     private void setCameraView() {
         //to make rectangle boundary
+
         double bottomBoundary = mUserPosition.getGeoPoint().getLatitude() - BOUNDARY_MARGIN;
         double leftBoundary = mUserPosition.getGeoPoint().getLongitude() - BOUNDARY_MARGIN;
         double topBoundary = mUserPosition.getGeoPoint().getLatitude() + BOUNDARY_MARGIN;
@@ -556,9 +586,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         }
     }
 
-
-    //TODO:
-    // Pamiętać, żeby przed wrzuceniem do bazy albo pobieraniem z bazy castować poziomy trudności!!!!!
     private void initListeners() {
         mDistanceRightButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -740,25 +767,25 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
             }
         }
 
-        if (byDistance) {
-            //TODO: Check It, bug
-            //sqrt((x2-x1)^2 + (y2-y1)^2)
-            //lat deg = 110.574 km
-            //long deg = 111.320*cos(lat) km
-            double chosenDistance = mCurrentDistance;
-            for (Event event : events) {
-                double distance = calculateDistance(event.getLocalization().getLatitude(),
-                        mUserPosition.getGeoPoint().getLatitude(),
-                        event.getLocalization().getLongitude(),
-                        mUserPosition.getGeoPoint().getLongitude()
-                );
-
-                if (distance < chosenDistance) {
-                    eventsToRemove.add(event);
-                }
-            }
-
-        }
+        //TODO: Naprawic filtrowanie
+//        if (byDistance) {
+//            //TODO: Check It, bug
+//            //sqrt((x2-x1)^2 + (y2-y1)^2)
+//            //lat deg = 110.574 km
+//            //long deg = 111.320*cos(lat) km
+//            double chosenDistance = mCurrentDistance;
+//            for (Event event : events) {
+//                double distance = calculateDistance(event.getLocalization().getLatitude(),
+//                        mUserPosition.getGeoPoint().getLatitude(),
+//                        event.getLocalization().getLongitude(),
+//                        mUserPosition.getGeoPoint().getLongitude()
+//                );
+//
+//                if (distance < chosenDistance) {
+//                    eventsToRemove.add(event);
+//                }
+//            }
+//        }
         if (byDate) {
             for (Event event : newEventList) {
                 if (!(event.getDate().getTime() > mCurrentLowDate.getTime() && event.getDate().getTime() < mCurrentUpDate.getTime())) {

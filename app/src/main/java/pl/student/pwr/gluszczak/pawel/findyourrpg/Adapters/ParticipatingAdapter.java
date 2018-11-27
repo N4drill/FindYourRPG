@@ -20,6 +20,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.EventDetailsActivity;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.ParticipatingDetailsActivity;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PASS_EVENT;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PASS_EVENT_DATE;
@@ -96,7 +97,10 @@ public class ParticipatingAdapter extends RecyclerView.Adapter<ParticipatingAdap
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ToastMaker.shortToast(mContext, "Click!");
+                    Intent intent = new Intent(itemView.getContext(), ParticipatingDetailsActivity.class);
+                    intent.putExtra(PASS_EVENT, event);
+                    intent.putExtra(PASS_EVENT_DATE, event.getDate().getTime());
+                    itemView.getContext().startActivity(intent);
                 }
             });
         }

@@ -17,24 +17,29 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.ParticipantsAdapter;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 
-import static android.support.constraint.Constraints.TAG;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserAverageAsGM;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserGames;
 
-public class EventDetailsFragment extends Fragment {
+public class ParticipatingEventFragment extends Fragment {
+
+    private static final String TAG = "ParticipatingEventFragm";
 
     private static final String ARG_EVENT = "event";
     private static final String ARG_EVENT_DATE = "eventDate";
@@ -45,19 +50,19 @@ public class EventDetailsFragment extends Fragment {
     private CircleImageView mMasterImage;
     private RatingBar mMasterRating;
     private RecyclerView mRecyclerView;
-    private Button mRemoveButton;
+    private Button mButton;
 
     //Vars
     private Event event;
     private SystemImagesMap mSystemImagesMap;
 
 
-    public static EventDetailsFragment newInstance(Event event, long dateTime) {
+    public static ParticipatingEventFragment newInstance(Event event, long dateTime) {
         Bundle args = new Bundle();
         args.putParcelable(ARG_EVENT, event);
         args.putLong(ARG_EVENT_DATE, dateTime);
 
-        EventDetailsFragment fragment = new EventDetailsFragment();
+        ParticipatingEventFragment fragment = new ParticipatingEventFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,9 +95,10 @@ public class EventDetailsFragment extends Fragment {
         mMasterImage = view.findViewById(R.id.row_participator_image);
         mMasterRating = view.findViewById(R.id.row_participator_rating);
         mRecyclerView = view.findViewById(R.id.game_summary_recyclerview);
-        mRemoveButton = view.findViewById(R.id.game_summary_button);
+        mButton = view.findViewById(R.id.game_summary_button);
         mSystemImagesMap = SystemImagesMap.newInstance(getActivity());
-        mRemoveButton.setVisibility(View.VISIBLE);
+        mButton.setText(getString(R.string.event_detail_participator));
+        mButton.setVisibility(View.VISIBLE);
     }
 
     private void initializeValues() {
@@ -116,18 +122,18 @@ public class EventDetailsFragment extends Fragment {
     }
 
     private void initializeListeners() {
-        mRemoveButton.setOnClickListener(new View.OnClickListener() {
+        mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(event.getTitle())
-                        .setMessage("Are you sure to remove this event?")
+                        .setMessage("Are you sure to quit this event?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                removeEventFromDatabase();
-                                getActivity().finish();
+                                removeUserFormEventDatabase();
+
                             }
 
                         })
@@ -138,26 +144,38 @@ public class EventDetailsFragment extends Fragment {
 
     }
 
-    private void removeEventFromDatabase() {
+    private void removeUserFormEventDatabase() {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
 
         DocumentReference eventReference = database
                 .collection(getString(R.string.collection_events))
                 .document(event.getId());
 
-        eventReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+        ArrayList<User> newParticipants = new ArrayList<>();
+        User currentUser = ((UserClient) (getActivity().getApplicationContext())).getUser();
+        if (!currentUser.getId().equals(event.getGame_maser().getId())) {
+            for (User user : event.getParticipants()) {
+                if (!user.getId().equals(currentUser.getId())) {
+                    newParticipants.add(user);
+                }
+            }
+        }
+
+        event.setParticipants(newParticipants);
+
+        eventReference.set(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "onSuccess: Deleted =>" + event.getId());
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d(TAG, "onComplete: sucessfully removed user!");
+                getActivity().finish();
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onFailure: Failed to remove event=>" + event.getId());
+                        Log.d(TAG, "onFailure: " + e.getMessage());
                     }
                 });
+
     }
-
-
 }

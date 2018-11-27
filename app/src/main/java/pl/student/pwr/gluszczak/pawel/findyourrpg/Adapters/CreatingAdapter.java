@@ -100,10 +100,6 @@ public class CreatingAdapter extends RecyclerView.Adapter<CreatingAdapter.ViewHo
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*EventDetailsFragment eventDetailsFragment = EventDetailsFragment.newInstance(event);
-                    ((FragmentActivity) itemView.getContext()).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_fragment_container, eventDetailsFragment)
-                            .commit();*/
                     Intent intent = new Intent(itemView.getContext(), EventDetailsActivity.class);
                     intent.putExtra(PASS_EVENT, event);
                     intent.putExtra(PASS_EVENT_DATE, event.getDate().getTime());
