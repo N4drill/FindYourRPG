@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    android:layout_height="match_parent"
         android:background="@drawable/default_background">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -110,11 +105,9 @@
             android:layout_marginTop="48dp"
             android:layout_marginEnd="100dp"
 
-            android:layout_marginBottom="0dp"
             app:cardBackgroundColor="@color/colorPrimary"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_password_card">
@@ -141,11 +134,9 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="100dp"
 
-            android:layout_marginBottom="0dp"
             app:cardBackgroundColor="@color/colorPrimary"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_button_card">
@@ -181,4 +172,3 @@
 
 
     </android.support.constraint.ConstraintLayout>
-</ScrollView>

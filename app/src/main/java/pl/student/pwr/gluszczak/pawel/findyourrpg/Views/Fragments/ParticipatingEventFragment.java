@@ -113,7 +113,7 @@ public class ParticipatingEventFragment extends Fragment {
         mMasterName.setText(event.getGame_maser().getUsername());
         mMasterGames.setText(String.valueOf(calculateUserGames(event.getGame_maser())));
         mSysImage.setImageResource(mSystemImagesMap.getImageForSystem(event.getSystem()));
-        //TODO: Master image set
+        mSysImage.setImageResource(event.getGame_maser().getAvatarUrl());
         mMasterRating.setRating(calculateUserAverageAsGM(event.getGame_maser()));
 
         initRecyclerView(event);

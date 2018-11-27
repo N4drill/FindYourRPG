@@ -29,7 +29,7 @@ public class MainMenuFragment extends BaseFragmentCreator {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        updateUserIfNeeded();
+        //updateUserIfNeeded();
         return view;
     }
 

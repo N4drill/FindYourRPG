@@ -8,6 +8,7 @@
     <color name="players_low">#42bc1d</color>
     <color name="players_medium">#ffe11e</color>
     <color name="players_full">#ff0000</color>
+    <color name="hint">#bababa</color>
 
     <color name="row_participatror_current_user">#38f400</color>
     <color name="your_event_border">#00026b</color>

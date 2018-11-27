@@ -33,6 +33,7 @@ public class SystemImagesMap {
         mImagesMap.put(context.getString(R.string.system_monastyr), R.drawable.system_placeholder);
         mImagesMap.put(context.getString(R.string.system_vampir), R.drawable.vampir);
         mImagesMap.put(context.getString(R.string.system_warhammer), R.drawable.warhammer);
+        mImagesMap.put(context.getString(R.string.system_pathfinder), R.drawable.pathfinder);
     }
 
     public HashMap<String, Integer> getImagesMap() {

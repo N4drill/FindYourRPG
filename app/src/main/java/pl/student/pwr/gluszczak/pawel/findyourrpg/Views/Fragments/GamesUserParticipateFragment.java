@@ -84,7 +84,6 @@ public class GamesUserParticipateFragment extends BaseFragmentCreator {
                             User currentUser = ((UserClient) (getActivity().getApplicationContext())).getUser();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Event event = document.toObject(Event.class);
-                                //TODO: Dodac jako warunek wyswietlania tylko tych w przyszlosci...
                                 if (currentDateTime < event.getDate().getTime()) {
                                     if (doesUserParticipate(currentUser, event)) {
                                         Log.d(TAG, "onComplete: =>Document " + document.getId() + "received, adding");

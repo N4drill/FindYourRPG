@@ -114,7 +114,7 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
     }
 
     private void updateNavigation(MenuItem menuItem) {
-        menuItem.setChecked(true);
+        //menuItem.setChecked(true);
         setTitle(menuItem.getTitle());
         mDrawerLayout.closeDrawers();
     }

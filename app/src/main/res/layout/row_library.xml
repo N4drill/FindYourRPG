@@ -41,6 +41,14 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginHorizontal="8dp"
                 android:text="@string/placeholder"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:singleLine="true"
+                android:scrollHorizontally="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:gravity="center" />
         </LinearLayout>
 

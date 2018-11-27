@@ -10,9 +10,12 @@
     <string name="app_name">FindYourRPG</string>
     <string name="login">Login</string>
     <string name="toast_default">Click</string>
-    <string name="option_looking">Looking</string>
-    <string name="option_create">Create Game</string>
+    <string name="option_looking">Find Games</string>
+    <string name="option_create">Create Zone</string>
     <string name="option_find_player">Find player</string>
+    <string name="option_participate">Participating</string>
+    <string name="option_organized">Organized</string>
+    <string name="option_participated">Participated</string>
     <string name="option_profile">Profile</string>
     <string name="option_logout">Logout</string>
     <string name="option_library">Library</string>
@@ -87,12 +90,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="master_rank_1">Creativity</string>
     <string name="master_rank_2">Behaviour</string>
     <string name="master_rank_3">Game feel</string>
-    <string name="option_participate">You participate</string>
-    <string name="option_organized">Organized</string>
-    <string name="option_participated">Participated</string>
+
     <string name="event_detail_participator">Leave</string>
     <string name="document_participants">participants</string>
     <string name="document_voted_users">votedUsers</string>
+    <string name="voted_on_master">You have voted on Game Master</string>
+    <string name="vote_on_players">You have already voted on each player</string>
 
     <!-- Spinners arrays -->
 

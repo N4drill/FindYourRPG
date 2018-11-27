@@ -13,16 +13,18 @@
         <item
             android:id="@+id/nav_participate"
             android:title="@string/option_participate"
-            android:icon="@drawable/ic_create" />
+            android:icon="@drawable/ic_participating" />
 
-        <item
-            android:id="@+id/nav_players"
-            android:title="@string/option_find_player"
-            android:icon="@drawable/ic_looking_for_players" />
         <item
             android:id="@+id/nav_library"
             android:title="@string/option_library"
             android:icon="@drawable/ic_library" />
+
+        <item
+            android:id="@+id/nav_players"
+            android:title="@string/option_find_player"
+            android:icon="@drawable/ic_looking_for_players"
+            android:enabled="false" />
 
     </group>
 
@@ -32,11 +34,11 @@
                 <item
                     android:id="@+id/nav_past_created"
                     android:title="@string/option_organized"
-                    android:icon="@drawable/face_placeholder" />
+                    android:icon="@drawable/ic_organized" />
                 <item
                     android:id="@+id/nav_past_participated"
                     android:title="@string/option_participated"
-                    android:icon="@drawable/face_placeholder" />
+                    android:icon="@drawable/ic_participated" />
             </group>
         </menu>
     </item>

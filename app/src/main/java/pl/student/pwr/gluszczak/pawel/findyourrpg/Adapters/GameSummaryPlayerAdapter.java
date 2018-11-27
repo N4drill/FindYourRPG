@@ -27,63 +27,46 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.EventUtils.prepareUpdateDatabaseList;
 
-public class GameSummaryAdapter extends RecyclerView.Adapter<GameSummaryAdapter.ViewHolder> {
+public class GameSummaryPlayerAdapter extends RecyclerView.Adapter<GameSummaryPlayerAdapter.ViewHolder> {
 
-    private static final String TAG = "GameSummaryAdapter";
+    private static final String TAG = "GameSummaryPlayer";
 
-    private List<User> mParticipators;
+    private List<User> mGameMasterList = new ArrayList<>();
     private Context mContext;
     private Event mEvent;
     private TextView mEmptyText;
+    private User mCurrentUser;
 
-    public GameSummaryAdapter(Context context, Event event, TextView emptyText) {
+    public GameSummaryPlayerAdapter(Context context, Event event, TextView emptyText, User currentUser) {
         mContext = context;
         mEmptyText = emptyText;
-        //mParticipators = event.getParticipants();
-        mParticipators = filterParticipants(event);
+        //mGameMasterList = event.getParticipants();
+        mGameMasterList.add(event.getGame_maser());
         mEvent = event;
-    }
-
-    private ArrayList<User> filterParticipants(Event event) {
-        ArrayList<User> needed = new ArrayList<>(event.getParticipants());
-        for (User user : event.getParticipants()) {
-            if (user.getId().equals(event.getGame_maser().getId())) {
-                needed.remove(user);
-            } else {
-                for (User alreadyVoted : event.getVotedUsers()) {
-                    if (alreadyVoted.getId().equals(user.getId())) {
-                        needed.remove(user);
-                    }
-                }
-            }
-
-        }
-
-        return needed;
+        mCurrentUser = currentUser;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public GameSummaryPlayerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.row_rank_player, parent, false);
-        GameSummaryAdapter.ViewHolder viewHolder = new GameSummaryAdapter.ViewHolder(view);
+        GameSummaryPlayerAdapter.ViewHolder viewHolder = new GameSummaryPlayerAdapter.ViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        User user = mParticipators.get(position);
+    public void onBindViewHolder(@NonNull GameSummaryPlayerAdapter.ViewHolder viewHolder, int position) {
+        User user = mGameMasterList.get(position);
         viewHolder.updateUI(user);
     }
 
     @Override
     public int getItemCount() {
-        return mParticipators.size();
+        return mGameMasterList.size();
     }
 
 
@@ -139,7 +122,7 @@ public class GameSummaryAdapter extends RecyclerView.Adapter<GameSummaryAdapter.
                 @Override
                 public void onClick(View v) {
                     if (checkValidation(rating1, rating2, rating3)) {
-                        updateDatabase(mParticipators.get(getAdapterPosition()), rating1, rating2, rating3);
+                        updateDatabase(mEvent.getGame_maser(), rating1, rating2, rating3);
                         removeAt(getAdapterPosition());
                     }
                 }
@@ -153,42 +136,41 @@ public class GameSummaryAdapter extends RecyclerView.Adapter<GameSummaryAdapter.
 
         public void updateUI(User user) {
             name.setText(user.getUsername());
-            image.setImageResource(R.drawable.face_placeholder); // TODO: Change image
+            image.setImageResource(user.getAvatarUrl());
         }
     }
 
-    private void updateDatabase(final User user, float rating1, float rating2, float rating3) {
+    private void updateDatabase(final User gameMaster, float rating1, float rating2, float rating3) {
         final FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
 
-        DocumentReference mUserReference = mDatabase
+        DocumentReference mGameMasterReference = mDatabase
                 .collection(mContext.getString(R.string.collection_users))
-                .document(user.getId());
+                .document(gameMaster.getId());
 
-        int gamesPlayed = user.getGamesAsPlayer();
+        int gamesPlayed = gameMaster.getGamesAsMaster();
         float newRank1, newRank2, newRank3;
         if (gamesPlayed == 0) {
             newRank1 = rating1;
             newRank2 = rating2;
             newRank3 = rating3;
         } else {
-            newRank1 = (user.getPlayerCreativity() + rating1) / 2;
-            newRank2 = (user.getPlayerBehaviour() + rating2) / 2;
-            newRank3 = (user.getPlayerGameFeel() + rating3) / 2;
+            newRank1 = (gameMaster.getMasterCreativity() + rating1) / 2;
+            newRank2 = (gameMaster.getMasterBehaviour() + rating2) / 2;
+            newRank3 = (gameMaster.getMasterGameFeel() + rating3) / 2;
         }
 
 
         Map<String, Object> updates = new HashMap<>();
-        updates.put("gamesAsPlayer", gamesPlayed + 1);
-        updates.put("playerCreativity", newRank1);
-        updates.put("playerBehaviour", newRank2);
-        updates.put("playerGameFeel", newRank3);
+        updates.put("masterCreativity", newRank1);
+        updates.put("masterBehaviour", newRank2);
+        updates.put("masterGameFeel", newRank3);
 
 
-        mUserReference.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mGameMasterReference.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Log.d(TAG, "onComplete: Updated User Info");
-                updateEventInfo(mDatabase, user);
+                Log.d(TAG, "onComplete: Updated Game master Info");
+                updateEventInfo(mDatabase);
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
@@ -200,25 +182,25 @@ public class GameSummaryAdapter extends RecyclerView.Adapter<GameSummaryAdapter.
 
     }
 
-    private void updateEventInfo(final FirebaseFirestore mDatabase, User user) {
-        final ArrayList<User> newVotedParticipators = new ArrayList<>(mEvent.getVotedUsers());
-        newVotedParticipators.add(user);
+    private void updateEventInfo(final FirebaseFirestore mDatabase) {
 
-        List<Map<String, Object>> list = prepareUpdateDatabaseList(newVotedParticipators);
+        final ArrayList<User> newVotedOnMaster = new ArrayList<>(mEvent.getVotedOnMaster());
+        newVotedOnMaster.add(mCurrentUser);
+
+        List<Map<String, Object>> list = prepareUpdateDatabaseList(newVotedOnMaster);
 
         DocumentReference mEventReference = mDatabase
                 .collection(mContext.getString(R.string.collection_events))
                 .document(mEvent.getId());
 
-        mEventReference.update(mContext.getString(R.string.document_voted_users), list).addOnSuccessListener(new OnSuccessListener<Void>() {
+        mEventReference.update("votedOnMaster", list).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "onSuccess: Successfully updated voteUserList");
                 //If that was last user to vote
 
-                if (newVotedParticipators.size() == mEvent.getParticipants().size() - 1) {
-                    updateGameMasterStats(mDatabase);
-                }
+                mEmptyText.setText(mContext.getString(R.string.voted_on_master));
+                mEmptyText.setVisibility(View.VISIBLE);
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
@@ -231,7 +213,7 @@ public class GameSummaryAdapter extends RecyclerView.Adapter<GameSummaryAdapter.
 
     }
 
-    private void updateGameMasterStats(FirebaseFirestore mDatabase) {
+/*    private void updateGameMasterStats(FirebaseFirestore mDatabase) {
         DocumentReference mGameMasterRef = mDatabase
                 .collection(mContext.getString(R.string.collection_users))
                 .document(mEvent.getGame_maser().getId());
@@ -253,14 +235,13 @@ public class GameSummaryAdapter extends RecyclerView.Adapter<GameSummaryAdapter.
                 Log.d(TAG, "onFailure: Couldnt update game master games");
             }
         });
-    }
+    }*/
 
 
     private void removeAt(int position) {
-        mParticipators.remove(position);
+        mGameMasterList.remove(position);
         notifyItemRemoved(position);
-        //notifyItemRangeChanged(position, mParticipators.size());
+        //notifyItemRangeChanged(position, mGameMasterList.size());
     }
-
 
 }

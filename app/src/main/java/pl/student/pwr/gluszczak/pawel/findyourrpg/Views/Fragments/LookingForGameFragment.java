@@ -138,10 +138,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO: TO TRZEBA INACZEJ POBIERAC!
-        //mUserPosition = getArguments().getParcelable(LOOKING_FOR_GAME_BUNDLE_GEOPOSITION);
-
-
     }
 
     @Nullable
@@ -386,8 +382,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                 new LatLng(event.getLocalization().getLatitude(), event.getLocalization().getLongitude()),
                 event.getTitle(),
                 dateToDateString(event.getDate()) + ", " + dateToTimeString(event.getDate()),
-                //TODO: Replace with user icon...
-                //R.drawable.ic_placeholder,
                 mImagesMap.getImageForSystem(event.getSystem()),
                 event
         );
@@ -777,7 +771,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
 
         //TODO: Naprawic filtrowanie
 //        if (byDistance) {
-//            //TODO: Check It, bug
 //            //sqrt((x2-x1)^2 + (y2-y1)^2)
 //            //lat deg = 110.574 km
 //            //long deg = 111.320*cos(lat) km

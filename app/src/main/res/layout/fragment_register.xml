@@ -15,6 +15,7 @@
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="Enter nickname"
+        android:textColorHint="@color/hint"
         android:inputType="textPersonName"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,6 +25,7 @@
 
     <EditText
         android:id="@+id/register_age_input"
+        android:textColorHint="@color/hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -43,20 +45,17 @@
         android:id="@+id/register_email_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="Enter email"
         android:inputType="textEmailAddress"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_age_input" />
+        android:textColorHint="@color/hint"
+        tools:layout_editor_absoluteX="98dp"
+        tools:layout_editor_absoluteY="114dp" />
 
     <EditText
         android:id="@+id/register_password_input"
+        android:textColorHint="@color/hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -74,6 +73,7 @@
 
     <EditText
         android:id="@+id/register_second_password_input"
+        android:textColorHint="@color/hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -90,6 +90,7 @@
 
     <EditText
         android:id="@+id/register_telephone"
+        android:textColorHint="@color/hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -130,6 +131,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:visibility="invisible"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -151,12 +153,14 @@
 
     <EditText
         android:id="@+id/register_bio"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="8dp"
+        android:textColorHint="@color/hint"
+
+        android:gravity="top"
         android:ems="10"
         android:hint="Your bio (optional)"
         android:inputType="textMultiLine"

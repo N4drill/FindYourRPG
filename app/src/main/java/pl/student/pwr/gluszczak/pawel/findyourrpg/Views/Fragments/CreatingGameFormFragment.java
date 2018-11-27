@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -111,6 +113,16 @@ public class CreatingGameFormFragment extends Fragment {
     }
 
     private void setListeners() {
+        mDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                }
+            }
+        });
+
+
         mSetLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -525,4 +537,6 @@ public class CreatingGameFormFragment extends Fragment {
     private void hideProgressBar() {
         mProgressBar.setVisibility(View.INVISIBLE);
     }
+
+
 }

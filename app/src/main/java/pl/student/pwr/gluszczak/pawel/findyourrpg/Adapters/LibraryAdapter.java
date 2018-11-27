@@ -48,9 +48,9 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             image = itemView.findViewById(R.id.row_library_image);
             systemName = itemView.findViewById(R.id.row_library_systemName);
+            systemName.setEnabled(true);
             description = itemView.findViewById(R.id.row_library_description);
         }
 

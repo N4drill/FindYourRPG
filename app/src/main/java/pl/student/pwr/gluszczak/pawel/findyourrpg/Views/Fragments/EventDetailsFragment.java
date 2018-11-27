@@ -27,6 +27,7 @@ import java.util.Date;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.ParticipantsAdapter;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
@@ -104,9 +105,8 @@ public class EventDetailsFragment extends Fragment {
         mMasterName.setText(event.getGame_maser().getUsername());
         mMasterGames.setText(String.valueOf(calculateUserGames(event.getGame_maser())));
         mSysImage.setImageResource(mSystemImagesMap.getImageForSystem(event.getSystem()));
-        //TODO: Master image set
+        mMasterImage.setImageResource(event.getGame_maser().getAvatarUrl());
         mMasterRating.setRating(calculateUserAverageAsGM(event.getGame_maser()));
-
         initRecyclerView(event);
 
     }

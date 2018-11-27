@@ -1,14 +1,11 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Fragments;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,29 +14,26 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.GameSummaryMasterAdapter;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.GameSummaryPlayerAdapter;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.ParticipantsAdapter;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
-import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 
-import static android.support.constraint.Constraints.TAG;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserAverageAsGM;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserGames;
 
-public class PastCreatedFragment extends Fragment {
+public class PastParticipatedFragment extends Fragment {
 
     private static final String ARG_EVENT = "event";
     private static final String ARG_EVENT_DATE = "eventDate";
+    private static final String ARG_CURRENT_USER = "currentUser";
 
     //Views
     private TextView mTitle, mDate, mMasterName, mMasterGames;
@@ -50,17 +44,20 @@ public class PastCreatedFragment extends Fragment {
     private Button mRemoveButton, mEditButton;
     private TextView mEmptyText;
 
+    private User mCurrentUser;
+
     //Vars
     private Event event;
     private SystemImagesMap mSystemImagesMap;
 
 
-    public static PastCreatedFragment newInstance(Event event, long dateTime) {
+    public static PastParticipatedFragment newInstance(Event event, long dateTime, User user) {
         Bundle args = new Bundle();
         args.putParcelable(ARG_EVENT, event);
         args.putLong(ARG_EVENT_DATE, dateTime);
+        args.putParcelable(ARG_CURRENT_USER, user);
 
-        PastCreatedFragment fragment = new PastCreatedFragment();
+        PastParticipatedFragment fragment = new PastParticipatedFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,6 +74,7 @@ public class PastCreatedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_game_summary, container, false);
         event = getArguments().getParcelable(ARG_EVENT);
         event.setDate(new Date(getArguments().getLong(ARG_EVENT_DATE)));
+        mCurrentUser = getArguments().getParcelable(ARG_CURRENT_USER);
 
         initializeComponents(view);
         initializeValues();
@@ -97,11 +95,7 @@ public class PastCreatedFragment extends Fragment {
         mEditButton = view.findViewById(R.id.game_summary_edit);
         mEmptyText = view.findViewById(R.id.game_summary_empty_text);
         mSystemImagesMap = SystemImagesMap.newInstance(getActivity());
-
-        if (isEventVotedByGameMaster(event)) {
-            mRemoveButton.setVisibility(View.VISIBLE);
-        }
-
+        // mRemoveButton.setVisibility(View.VISIBLE);
         // mEditButton.setVisibility(View.VISIBLE);
     }
 
@@ -114,8 +108,8 @@ public class PastCreatedFragment extends Fragment {
         mMasterImage.setImageResource(event.getGame_maser().getAvatarUrl());
         mMasterRating.setRating(calculateUserAverageAsGM(event.getGame_maser()));
 
-        if (isEventVotedByGameMaster(event)) {
-            mEmptyText.setText(getString(R.string.vote_on_players));
+        if (didUserVotedOnMaster(event, mCurrentUser)) {
+            mEmptyText.setText(getString(R.string.voted_on_master));
             mEmptyText.setVisibility(View.VISIBLE);
         }
 
@@ -127,66 +121,30 @@ public class PastCreatedFragment extends Fragment {
     private void initRecyclerView(Event event) {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        if (isEventVotedByGameMaster(event)) {
-            ParticipantsAdapter adapter = new ParticipantsAdapter(event.getParticipants(), event.getGame_maser(), getActivity());
+
+        if (!didUserVotedOnMaster(event, mCurrentUser)) {
+            GameSummaryPlayerAdapter adapter = new GameSummaryPlayerAdapter(getActivity(), event, mEmptyText, mCurrentUser);
             mRecyclerView.setAdapter(adapter);
+
         } else {
-            GameSummaryMasterAdapter adapter = new GameSummaryMasterAdapter(getActivity(), event, mEmptyText);
+            ParticipantsAdapter adapter = new ParticipantsAdapter(event.getParticipants(), event.getGame_maser(), getActivity());
             mRecyclerView.setAdapter(adapter);
         }
 
 
     }
 
-    private boolean isEventVotedByGameMaster(Event event) {
-        return event.getParticipants().size() - 1 == event.getVotedUsers().size();
+    private boolean didUserVotedOnMaster(Event event, User currentUser) {
+        for (User user : event.getVotedOnMaster()) {
+            if (currentUser.getId().equals(user.getId())) {
+                //Already voted on master
+                return true;
+            }
+        }
+        return false;
     }
 
     private void initializeListeners() {
-        mRemoveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isEventVotedByGameMaster(event)) {
-                    new AlertDialog.Builder(getActivity())
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setTitle(event.getTitle())
-                            .setMessage("Are you sure to remove this event?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    removeEventFromDatabase();
-                                    getActivity().finish();
-                                }
-
-                            })
-                            .setNegativeButton("No", null)
-                            .show();
-                } else {
-                    ToastMaker.shortToast(getActivity(), "You must vote on all users first");
-                }
-            }
-        });
-
     }
 
-    private void removeEventFromDatabase() {
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-
-        DocumentReference eventReference = database
-                .collection(getString(R.string.collection_events))
-                .document(event.getId());
-
-        eventReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "onSuccess: Deleted =>" + event.getId());
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onFailure: Failed to remove event=>" + event.getId());
-                    }
-                });
-    }
 }

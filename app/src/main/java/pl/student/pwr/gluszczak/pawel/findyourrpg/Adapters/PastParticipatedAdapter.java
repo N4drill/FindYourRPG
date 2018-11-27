@@ -1,6 +1,7 @@
 package pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +19,11 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.PastCreatedActivity;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Activities.PastParticipatedActivity;
 
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PASS_EVENT;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.PASS_EVENT_DATE;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToTimeString;
 
@@ -91,7 +96,10 @@ public class PastParticipatedAdapter extends RecyclerView.Adapter<PastParticipat
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ToastMaker.shortToast(mContext, "Click!");
+                    Intent intent = new Intent(itemView.getContext(), PastParticipatedActivity.class);
+                    intent.putExtra(PASS_EVENT, event);
+                    intent.putExtra(PASS_EVENT_DATE, event.getDate().getTime());
+                    itemView.getContext().startActivity(intent);
                 }
             });
         }

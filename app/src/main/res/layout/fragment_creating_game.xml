@@ -17,7 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        android:elevation="10dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/createF_recycler"
@@ -32,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Next"
+        android:text="Create"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         android:textAllCaps="false"

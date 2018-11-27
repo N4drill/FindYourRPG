@@ -33,14 +33,19 @@ abstract public class UserUtils {
         float b = user.getMasterBehaviour();
         float c = user.getMasterGameFeel();
 
-        return (a + b + c) / 3;
+        float result = (a + b + c) / 3;
+
+        return result;
     }
 
     public static float calculateUserAverageAsPlayer(User user) {
         float a = user.getPlayerCreativity();
         float b = user.getPlayerBehaviour();
         float c = user.getPlayerGameFeel();
-        return (a + b + c) / 3;
+
+        float result = (a + b + c) / 3;
+
+        return result;
     }
 
     public static float calculateUserAverage(User user) {
@@ -51,7 +56,9 @@ abstract public class UserUtils {
         float b2 = user.getPlayerBehaviour();
         float c2 = user.getPlayerGameFeel();
 
-        return (((a + b + c) / 3) + ((a2 + b2 + c2) / 3)) / 2;
+        float result = (((a + b + c) / 3) + ((a2 + b2 + c2) / 3)) / 2;
+
+        return result;
     }
 
     public static int calculateUserGames(User user) {

@@ -32,6 +32,7 @@
         <activity android:name=".Views.Activities.EventDetailsActivity"></activity>
         <activity android:name=".Views.Activities.ParticipatingDetailsActivity"></activity>
         <activity android:name=".Views.Activities.PastCreatedActivity"></activity>
+        <activity android:name=".Views.Activities.PastParticipatedActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
