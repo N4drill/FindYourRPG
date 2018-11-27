@@ -20,8 +20,8 @@ public class FacePickerAdapter extends BaseAdapter {
         return mImages.length;
     }
 
-    public Object getItem(int position) {
-        return null;
+    public Integer getItem(int position) {
+        return mImages[position];
     }
 
     public long getItemId(int position) {
@@ -34,29 +34,32 @@ public class FacePickerAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(85, 85));
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(512, 512));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+            imageView.setPadding(2, 2, 2, 2);
         } else {
             imageView = (ImageView) convertView;
         }
 
         imageView.setImageResource(mImages[position]);
+        if (position == 0) {
+            imageView.setBackground(mContext.getDrawable(R.drawable.border_your_event));
+        }
         return imageView;
     }
 
     private Integer[] mImages = {
             R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
-            R.drawable.face_placeholder,
+            R.drawable.face_1,
+            R.drawable.face_2,
+            R.drawable.face_3,
+            R.drawable.face_4,
+            R.drawable.face_5,
+            R.drawable.face_6,
+            R.drawable.face_7,
+            R.drawable.face_8,
+            R.drawable.face_9,
+            R.drawable.face_10,
+            R.drawable.face_11,
     };
 }

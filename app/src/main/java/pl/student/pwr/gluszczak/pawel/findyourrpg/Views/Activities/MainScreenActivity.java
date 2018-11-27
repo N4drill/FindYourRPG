@@ -138,7 +138,7 @@ public class MainScreenActivity extends SinglePageActivityWithNav {
         user = ((UserClient) (getApplicationContext())).getUser();
         if (user != null) {
             //Setup nav image
-
+            mNavImage.setImageResource(user.getAvatarUrl());
             //Setup nav name
             mNavName.setText(user.getUsername());
             Log.d(TAG, "updateNavHeader: Successfully updated navHead");

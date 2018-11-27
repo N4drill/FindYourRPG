@@ -17,10 +17,14 @@ public class User implements Parcelable {
     private float masterCreativity = 0;
     private float masterBehaviour = 0;
     private float masterGameFeel = 0;
-    private String favouriteSystem;
-    private String avatarUrl;
+    private Integer avatarUrl;
+    private String phone;
+    private String bio;
 
-    public User(String email, String id, String username, int age, int gamesAsMaster, int gamesAsPlayer, float playerCreativity, float playerBehaviour, float playerGameFeel, float masterCreativity, float masterBehaviour, float masterGameFeel, String favouriteSystem, String avatarUrl) {
+    public User() {
+    }
+
+    public User(String email, String id, String username, int age, int gamesAsMaster, int gamesAsPlayer, float playerCreativity, float playerBehaviour, float playerGameFeel, float masterCreativity, float masterBehaviour, float masterGameFeel, Integer avatarUrl, String phone, String bio) {
         this.email = email;
         this.id = id;
         this.username = username;
@@ -33,13 +37,10 @@ public class User implements Parcelable {
         this.masterCreativity = masterCreativity;
         this.masterBehaviour = masterBehaviour;
         this.masterGameFeel = masterGameFeel;
-        this.favouriteSystem = favouriteSystem;
         this.avatarUrl = avatarUrl;
+        this.phone = phone;
+        this.bio = bio;
     }
-
-    public User() {
-    }
-
 
     protected User(Parcel in) {
         email = in.readString();
@@ -54,8 +55,13 @@ public class User implements Parcelable {
         masterCreativity = in.readFloat();
         masterBehaviour = in.readFloat();
         masterGameFeel = in.readFloat();
-        favouriteSystem = in.readString();
-        avatarUrl = in.readString();
+        if (in.readByte() == 0) {
+            avatarUrl = null;
+        } else {
+            avatarUrl = in.readInt();
+        }
+        phone = in.readString();
+        bio = in.readString();
     }
 
     @Override
@@ -72,8 +78,14 @@ public class User implements Parcelable {
         dest.writeFloat(masterCreativity);
         dest.writeFloat(masterBehaviour);
         dest.writeFloat(masterGameFeel);
-        dest.writeString(favouriteSystem);
-        dest.writeString(avatarUrl);
+        if (avatarUrl == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(avatarUrl);
+        }
+        dest.writeString(phone);
+        dest.writeString(bio);
     }
 
     @Override
@@ -92,6 +104,30 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
+    public Integer getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(Integer avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
 
     public String getEmail() {
         return email;
@@ -189,19 +225,4 @@ public class User implements Parcelable {
         this.masterGameFeel = masterGameFeel;
     }
 
-    public String getFavouriteSystem() {
-        return favouriteSystem;
-    }
-
-    public void setFavouriteSystem(String favouriteSystem) {
-        this.favouriteSystem = favouriteSystem;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
 }

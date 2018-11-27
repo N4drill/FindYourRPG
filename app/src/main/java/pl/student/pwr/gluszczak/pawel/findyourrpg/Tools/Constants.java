@@ -10,6 +10,7 @@ abstract public class Constants {
     public static final int REQUEST_TIME = 1;
     public static final int REQUEST_LOCATION = 2;
     public static final int REQUEST_EVENT = 3;
+    public static final int REQUEST_FACE = 4;
 
 
     public static final int MAP_LAYOUT_STATE_CONTRACTED = 50;

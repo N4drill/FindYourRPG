@@ -4,6 +4,8 @@
     android:id="@+id/dialog_face_picker_grid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout_editor_absoluteX="8dp"
-    tools:layout_editor_absoluteY="8dp"
-    android:numColumns="2" />
+    android:gravity="center"
+    android:verticalSpacing="2dp"
+    android:horizontalSpacing="2dp"
+    android:stretchMode="columnWidth"
+    android:numColumns="auto_fit" />

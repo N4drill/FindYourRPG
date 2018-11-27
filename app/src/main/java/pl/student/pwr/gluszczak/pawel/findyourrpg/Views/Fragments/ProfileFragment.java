@@ -30,7 +30,7 @@ public class ProfileFragment extends BaseFragmentCreator {
 
     //Views
     private CircleImageView mImage;
-    private TextView mName, mAge, mGamesPlayed, mFavSystem;
+    private TextView mName, mAge, mGamesPlayed;
     private TextView mP1Rank, mP2Rank, mP3Rank;
     private TextView mM1Rank, mM2Rank, mM3Rank;
     private RatingBar mPRatingBar, mMRatingBar, mOverallRating;
@@ -53,11 +53,12 @@ public class ProfileFragment extends BaseFragmentCreator {
             Log.d(TAG, "updateProfileInformation: Successful get user from UserClient");
 
             try {
-                //Set avatar
-                if (user.getAvatarUrl() != null) {
+                /*if (user.getAvatarUrl() != null) {
                     mImage.setImageResource(setUserImage(user.getAvatarUrl()));
                     Log.d(TAG, "updateProfileInformation: avatar updated");
-                }
+                }*/
+                //Set Avatar
+                mImage.setImageResource(user.getAvatarUrl());
 
                 //Set name
                 setNameTypeDisplay();
@@ -72,8 +73,7 @@ public class ProfileFragment extends BaseFragmentCreator {
                 Log.d(TAG, "updateProfileInformation: games played set");
 
                 //Set favourite system
-                mFavSystem.setText(user.getFavouriteSystem());
-                Log.d(TAG, "updateProfileInformation: fav system set");
+
 
                 //--Player ranks--
                 //Set player rank 1
@@ -144,8 +144,6 @@ public class ProfileFragment extends BaseFragmentCreator {
         mName = view.findViewById(R.id.profile_name);
         mAge = view.findViewById(R.id.profile_player_age);
         mGamesPlayed = view.findViewById(R.id.profile_games_played_value);
-        mFavSystem = view.findViewById(R.id.profile_fav_system_value);
-        mFavSystem.setSelected(true);
 
         mP1Rank = view.findViewById(R.id.profile_rank_1_value);
         mP2Rank = view.findViewById(R.id.profile_rank_2_value);

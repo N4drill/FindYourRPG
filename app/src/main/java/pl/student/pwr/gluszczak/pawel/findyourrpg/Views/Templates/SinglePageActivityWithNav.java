@@ -239,7 +239,9 @@ public abstract class SinglePageActivityWithNav extends AppCompatActivity {
             Log.d(TAG, "onPostExecute: Trying to update nav header");
             if (user != null) {
                 TextView navName = findViewById(R.id.nav_name);
+                CircleImageView navImage = findViewById(R.id.nav_image);
                 navName.setText(user.getUsername());
+                navImage.setImageResource(user.getAvatarUrl());
                 Log.d(TAG, "onPostExecute: Success");
             } else {
                 Log.d(TAG, "onPostExecute: UserClient is null");
