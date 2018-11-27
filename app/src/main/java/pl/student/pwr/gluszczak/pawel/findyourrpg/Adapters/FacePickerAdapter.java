@@ -11,6 +11,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 public class FacePickerAdapter extends BaseAdapter {
 
     private Context mContext;
+    private boolean mFlag = false;
 
     public FacePickerAdapter(Context context) {
         mContext = context;
@@ -34,7 +35,7 @@ public class FacePickerAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(512, 512));
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(400, 400));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(2, 2, 2, 2);
         } else {
@@ -42,9 +43,6 @@ public class FacePickerAdapter extends BaseAdapter {
         }
 
         imageView.setImageResource(mImages[position]);
-        if (position == 0) {
-            imageView.setBackground(mContext.getDrawable(R.drawable.border_your_event));
-        }
         return imageView;
     }
 

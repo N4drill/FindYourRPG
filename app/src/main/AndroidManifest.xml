@@ -31,6 +31,7 @@
         <activity android:name=".Views.Activities.GameCreatingFormActivity"></activity>
         <activity android:name=".Views.Activities.EventDetailsActivity"></activity>
         <activity android:name=".Views.Activities.ParticipatingDetailsActivity"></activity>
+        <activity android:name=".Views.Activities.PastCreatedActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

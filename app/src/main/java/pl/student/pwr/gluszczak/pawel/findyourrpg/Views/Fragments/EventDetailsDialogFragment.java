@@ -23,6 +23,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.ParticipantsAdapter;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.Event;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Model.User;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
+import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 
@@ -47,6 +48,7 @@ public class EventDetailsDialogFragment extends AppCompatDialogFragment {
     RatingBar mGMRating;
     RecyclerView mRecyclerView;
     ParticipantsAdapter mParticipantsAdapter;
+    SystemImagesMap mSystemImagesMap;
 
 
     //Vars
@@ -65,6 +67,7 @@ public class EventDetailsDialogFragment extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Event event = getArguments().getParcelable(ARG_EVENT);
+        mSystemImagesMap = SystemImagesMap.newInstance(getActivity());
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_event_details, null);
 
@@ -177,13 +180,13 @@ public class EventDetailsDialogFragment extends AppCompatDialogFragment {
 
     private void updateUI(Event event) {
         mDescription.setText(event.getDescription());
-        //image for system
+        mSystemImage.setImageResource(mSystemImagesMap.getImageForSystem(event.getSystem()));
         mDate.setText(event.getDate().toString());
         mSystem.setText(event.getSystem());
         mMinExp.setText(expierienceNameParserLongToShort(getActivity(), event.getMin_exp()));
         mRecExp.setText(expierienceNameParserLongToShort(getActivity(), event.getRec_exp()));
         mPlayers.setText(playersNeededLeft(event.getNeeded_players(), event.getParticipants().size()));
-        //image for GM
+        mGMImage.setImageResource(event.getGame_maser().getAvatarUrl());
         mGMName.setText(event.getGame_maser().getUsername());
         mGMRating.setRating(calculateUserAverageAsGM(event.getGame_maser()));
         mGMGamesPlayed.setText(String.valueOf(event.getGame_maser().getGamesAsMaster() + event.getGame_maser().getGamesAsPlayer()));

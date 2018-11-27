@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.firebase.firestore.GeoPoint;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -21,9 +22,13 @@ public class Event implements Parcelable, Comparable<Event> {
     private Date date;
     private User game_maser;
     private String system;
+    private ArrayList<User> votedUsers = new ArrayList<>();
+    private ArrayList<User> votedOnMaster = new ArrayList<>();
 
+    public Event() {
+    }
 
-    public Event(String id, String title, String min_exp, String rec_exp, int needed_players, GeoPoint localization, String description, ArrayList<User> participants, Date date, User game_maser, String system) {
+    public Event(String id, String title, String min_exp, String rec_exp, int needed_players, GeoPoint localization, String description, ArrayList<User> participants, Date date, User game_maser, String system, ArrayList<User> votedUsers, ArrayList<User> votedOnMaster) {
         this.id = id;
         this.title = title;
         this.min_exp = min_exp;
@@ -35,11 +40,9 @@ public class Event implements Parcelable, Comparable<Event> {
         this.date = date;
         this.game_maser = game_maser;
         this.system = system;
+        this.votedUsers = votedUsers;
+        this.votedOnMaster = votedOnMaster;
     }
-
-    public Event() {
-    }
-
 
     protected Event(Parcel in) {
         id = in.readString();
@@ -51,6 +54,8 @@ public class Event implements Parcelable, Comparable<Event> {
         participants = in.createTypedArrayList(User.CREATOR);
         game_maser = in.readParcelable(User.class.getClassLoader());
         system = in.readString();
+        votedUsers = in.createTypedArrayList(User.CREATOR);
+        votedOnMaster = in.createTypedArrayList(User.CREATOR);
     }
 
     @Override
@@ -64,6 +69,8 @@ public class Event implements Parcelable, Comparable<Event> {
         dest.writeTypedList(participants);
         dest.writeParcelable(game_maser, flags);
         dest.writeString(system);
+        dest.writeTypedList(votedUsers);
+        dest.writeTypedList(votedOnMaster);
     }
 
     @Override
@@ -82,6 +89,22 @@ public class Event implements Parcelable, Comparable<Event> {
             return new Event[size];
         }
     };
+
+    public ArrayList<User> getVotedOnMaster() {
+        return votedOnMaster;
+    }
+
+    public void setVotedOnMaster(ArrayList<User> votedOnMaster) {
+        this.votedOnMaster = votedOnMaster;
+    }
+
+    public ArrayList<User> getVotedUsers() {
+        return votedUsers;
+    }
+
+    public void setVotedUsers(ArrayList<User> votedUsers) {
+        this.votedUsers = votedUsers;
+    }
 
     public String getId() {
         return id;

@@ -60,7 +60,6 @@
                     android:layout_marginRight="5dp"
                     android:text="Age:"
                     android:textColor="@color/white"
-
                     android:textStyle="italic|bold" />
 
                 <TextView
@@ -73,6 +72,29 @@
                     android:text="16"
                     android:textColor="@color/white"
                     android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/profile_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profile_player_age"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Empty"
+                    android:textColor="@color/white"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/profile_phone_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profile_player_age"
+                    android:layout_toLeftOf="@id/profile_phone"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="5dp"
+                    android:text="Phone:"
+                    android:textColor="@color/white"
+                    android:textStyle="italic|bold" />
 
                 <TextView
                     android:id="@+id/overall_text"
@@ -90,7 +112,7 @@
                     android:id="@+id/profile_overall_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/profile_player_age"
+                    android:layout_below="@id/profile_phone"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
 
@@ -114,9 +136,21 @@
             app:layout_constraintTop_toBottomOf="@+id/profile_base_container">
 
             <TextView
+                android:id="@+id/profile_bio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text=""
+                android:textStyle="italic"
+                android:textSize="18sp"
+                android:textColor="@color/white" />
+
+
+            <TextView
                 android:id="@+id/profile_games_played"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/profile_bio"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:text="Games played: "
@@ -134,38 +168,11 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/profile_statisctic_default_text_size" />
 
-            <TextView
-                android:id="@+id/profile_fav_system"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/profile_games_played"
-                android:layout_alignStart="@id/profile_games_played"
-                android:layout_marginTop="8dp"
-                android:text="Favourite system:"
-                android:textColor="@color/white"
-                android:textSize="@dimen/profile_statisctic_default_text_size" />
-
-            <TextView
-                android:id="@+id/profile_fav_system_value"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/profile_fav_system"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="8dp"
-                android:textColor="@color/white"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:singleLine="true"
-                android:scrollHorizontally="true"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:text="@string/system_dnd"
-                android:textSize="@dimen/profile_statisctic_default_text_size" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/profile_fav_system"
+                android:layout_below="@id/profile_games_played_value"
                 android:layout_margin="8dp"
                 android:orientation="horizontal"
                 android:textColor="@color/white"
@@ -385,22 +392,6 @@
             </LinearLayout>
 
         </RelativeLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/profile_edit_button"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:clickable="true"
-            app:elevation="1dp"
-            app:borderWidth="0dp"
-            app:pressedTranslationZ="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_statistics_container"
-            app:srcCompat="@android:drawable/ic_menu_edit" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

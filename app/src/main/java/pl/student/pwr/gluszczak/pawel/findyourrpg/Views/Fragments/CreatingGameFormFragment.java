@@ -338,7 +338,7 @@ public class CreatingGameFormFragment extends Fragment {
 
     private void initializePlayerNumberSpinner() {
         ArrayList<CharSequence> options = new ArrayList<CharSequence>(Arrays.asList(getString(R.string.header_players_needed)));
-        for (int i = 0; i < 10; i++) {
+        for (int i = 2; i < 10; i++) {
             options.add(String.valueOf(i));
         }
         mPlayerNumberAdapter = new ArrayAdapter<CharSequence>(getActivity(), android.R.layout.simple_spinner_item, options);

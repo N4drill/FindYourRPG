@@ -640,8 +640,16 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                 mIsFiltered = false;
                 mFilteredEvents.clear();
                 updateClusters(mAllEvents);
+                resetFiltersSwitches();
             }
         });
+    }
+
+    private void resetFiltersSwitches() {
+        mSystemSwitch.setChecked(false);
+        mDistanceSwitch.setChecked(false);
+        mExpSwitch.setChecked(false);
+        mDateSwitch.setChecked(false);
     }
 
     private View.OnClickListener onFilterClickListener() {

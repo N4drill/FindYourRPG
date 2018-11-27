@@ -19,6 +19,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Views.Templates.BaseFragmentCreator;
 
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.CheckingTool.isEmpty;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateAverage;
 
 public class ProfileFragment extends BaseFragmentCreator {
@@ -34,7 +35,7 @@ public class ProfileFragment extends BaseFragmentCreator {
     private TextView mP1Rank, mP2Rank, mP3Rank;
     private TextView mM1Rank, mM2Rank, mM3Rank;
     private RatingBar mPRatingBar, mMRatingBar, mOverallRating;
-    private FloatingActionButton mEditButton;
+    private TextView mPhone, mBio;
 
     //flags
     private boolean mNickNameType = true;
@@ -72,8 +73,15 @@ public class ProfileFragment extends BaseFragmentCreator {
                 mGamesPlayed.setText(String.valueOf(user.getGamesAsMaster() + user.getGamesAsPlayer()));
                 Log.d(TAG, "updateProfileInformation: games played set");
 
-                //Set favourite system
+                //Set bio
+                if (user.getBio() != null && !isEmpty(user.getBio())) {
+                    mBio.setText(user.getBio());
+                }
 
+                //Set Phone
+                if (user.getPhone() != null && !isEmpty(user.getPhone())) {
+                    mPhone.setText(user.getPhone());
+                }
 
                 //--Player ranks--
                 //Set player rank 1
@@ -157,17 +165,13 @@ public class ProfileFragment extends BaseFragmentCreator {
         mMRatingBar = view.findViewById(R.id.profile_rank_rating_master);
         mOverallRating = view.findViewById(R.id.profile_overall_rating);
 
-        mEditButton = view.findViewById(R.id.profile_edit_button);
+        mPhone = view.findViewById(R.id.profile_phone);
+        mBio = view.findViewById(R.id.profile_bio);
+
     }
 
     @Override
     protected void setOnClickListeners() {
-        mEditButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastMaker.shortToast(getActivity(), "EDIT!");
-            }
-        });
 
         mName.setOnClickListener(new View.OnClickListener() {
             @Override

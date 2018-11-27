@@ -19,12 +19,17 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Adapters.ParticipantsAdapter;
@@ -34,6 +39,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.R;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.EventUtils.prepareUpdateDatabaseList;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserAverageAsGM;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserGames;
 
@@ -161,19 +167,21 @@ public class ParticipatingEventFragment extends Fragment {
             }
         }
 
-        event.setParticipants(newParticipants);
+        //event.setParticipants(newParticipants);
 
-        eventReference.set(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        List<Map<String, Object>> list = prepareUpdateDatabaseList(newParticipants);
+
+        eventReference.update(getString(R.string.document_participants), list).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.d(TAG, "onComplete: sucessfully removed user!");
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "onSuccess: Successfully removed user from list");
                 getActivity().finish();
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onFailure: " + e.getMessage());
+                        Log.d(TAG, "onFailure: ");
                     }
                 });
 

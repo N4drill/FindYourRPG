@@ -83,7 +83,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
         }
 
         public void updateUI(User user) {
-            //set image
+            image.setImageResource(user.getAvatarUrl());
             username.setText(user.getUsername());
             games.setText(String.valueOf(user.getGamesAsPlayer() + user.getGamesAsMaster()));
             rating.setRating(calculateUserAverageAsPlayer(user));

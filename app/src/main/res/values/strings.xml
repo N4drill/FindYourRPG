@@ -91,6 +91,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla consequ
     <string name="option_organized">Organized</string>
     <string name="option_participated">Participated</string>
     <string name="event_detail_participator">Leave</string>
+    <string name="document_participants">participants</string>
+    <string name="document_voted_users">votedUsers</string>
 
     <!-- Spinners arrays -->
 
