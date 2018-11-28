@@ -19,20 +19,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Views.Activities.LoginActivity">
+        <activity
+            android:name=".Views.Activities.LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Views.Activities.MainScreenActivity" />
-        <activity android:name=".Views.Activities.RegisterActivity" />
-        <activity android:name=".Views.Activities.GameCreatingFormActivity"></activity>
-        <activity android:name=".Views.Activities.EventDetailsActivity"></activity>
-        <activity android:name=".Views.Activities.ParticipatingDetailsActivity"></activity>
-        <activity android:name=".Views.Activities.PastCreatedActivity"></activity>
-        <activity android:name=".Views.Activities.PastParticipatedActivity"></activity>
+        <activity
+            android:name=".Views.Activities.MainScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Views.Activities.RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Views.Activities.GameCreatingFormActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Views.Activities.EventDetailsActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Views.Activities.ParticipatingDetailsActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Views.Activities.PastCreatedActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Views.Activities.PastParticipatedActivity"
+            android:screenOrientation="portrait"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

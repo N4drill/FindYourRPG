@@ -50,7 +50,6 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
             super(itemView);
             image = itemView.findViewById(R.id.row_library_image);
             systemName = itemView.findViewById(R.id.row_library_systemName);
-            systemName.setEnabled(true);
             description = itemView.findViewById(R.id.row_library_description);
         }
 
@@ -58,6 +57,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
             image.setImageResource(gameSystem.getImageResource());
             systemName.setText("" + gameSystem.getName());
             description.setText("" + gameSystem.getDescription());
+            systemName.setEnabled(true);
         }
 
 
