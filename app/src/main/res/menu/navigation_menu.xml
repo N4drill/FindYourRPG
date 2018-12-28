@@ -20,12 +20,6 @@
             android:title="@string/option_library"
             android:icon="@drawable/ic_library" />
 
-        <item
-            android:id="@+id/nav_players"
-            android:title="@string/option_find_player"
-            android:icon="@drawable/ic_looking_for_players"
-            android:enabled="false" />
-
     </group>
 
     <item android:title="Past games">

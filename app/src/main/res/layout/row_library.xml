@@ -58,6 +58,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.6"
             android:padding="8dp"
+            android:scrollbars="vertical"
             android:text="@string/lorem_ipsum_medium" />
 
 
