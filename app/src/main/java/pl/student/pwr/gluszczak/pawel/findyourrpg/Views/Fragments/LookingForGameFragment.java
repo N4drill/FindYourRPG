@@ -198,15 +198,14 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     }
 
     private void initSystemSpinner() {
-        mSystemAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.game_systems, android.R.layout.simple_spinner_item);
-        mSystemAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.game_systems, android.R.layout.simple_spinner_item);
+        mSystemAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.game_systems, R.layout.spinner_item);
         mSystemAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSystemSpinner.setAdapter(mSystemAdapter);
 
     }
 
     private void initExpSpinner() {
-        mExpAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.exp_levels_short, android.R.layout.simple_spinner_item);
+        mExpAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.exp_levels_short, R.layout.spinner_item);
         mExpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mExpSpinner.setAdapter(mExpAdapter);
     }

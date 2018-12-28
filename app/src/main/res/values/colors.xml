@@ -10,6 +10,8 @@
     <color name="players_full">#ff0000</color>
     <color name="hint">#bababa</color>
 
+    <color name="button">#996c5b</color>
+
     <color name="row_participatror_current_user">#38f400</color>
     <color name="your_event_border">#00026b</color>
 

@@ -38,7 +38,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
-        android:drawableRight="@drawable/ic_add" />
+        style="@style/AppTheme.MyButton" />
 
 
 </android.support.constraint.ConstraintLayout>

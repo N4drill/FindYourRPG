@@ -328,21 +328,21 @@ public class CreatingGameFormFragment extends Fragment {
     }
 
     private void initializeSystemSpinner() {
-        mSystemsAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.game_systems, android.R.layout.simple_spinner_item);
+        mSystemsAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.game_systems, R.layout.spinner_item);
         mSystemsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSystemSpinner.setAdapter(mSystemsAdapter);
         Log.d(TAG, "initializeSystemSpinner: done");
     }
 
     private void initializeMinExpSpinner() {
-        mMinExpAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.exp_levels_min, android.R.layout.simple_spinner_item);
+        mMinExpAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.exp_levels_min, R.layout.spinner_item);
         mMinExpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mMinExpSpinner.setAdapter(mMinExpAdapter);
         Log.d(TAG, "initializeMinExpSpinner: done");
     }
 
     private void initializeRecExpSpinner() {
-        mRecExpAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.exp_levels_rec, android.R.layout.simple_spinner_item);
+        mRecExpAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.exp_levels_rec, R.layout.spinner_item);
         mRecExpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRecExpSpinner.setAdapter(mRecExpAdapter);
         Log.d(TAG, "initializeRecExpSpinner: done");
@@ -353,7 +353,7 @@ public class CreatingGameFormFragment extends Fragment {
         for (int i = 2; i < 10; i++) {
             options.add(String.valueOf(i));
         }
-        mPlayerNumberAdapter = new ArrayAdapter<CharSequence>(getActivity(), android.R.layout.simple_spinner_item, options);
+        mPlayerNumberAdapter = new ArrayAdapter<CharSequence>(getActivity(), R.layout.spinner_item, options);
         mPlayerNumberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mNeededPlayersSpinner.setAdapter(mPlayerNumberAdapter);
         Log.d(TAG, "initializePlayerNumberSpinner: done");

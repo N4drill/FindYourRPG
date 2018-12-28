@@ -96,7 +96,7 @@ public class EventDetailsFragment extends Fragment {
         mEditButton = view.findViewById(R.id.game_summary_edit);
         mSystemImagesMap = SystemImagesMap.newInstance(getActivity());
         mRemoveButton.setVisibility(View.VISIBLE);
-        mEditButton.setVisibility(View.VISIBLE);
+        mEditButton.setVisibility(View.INVISIBLE);
     }
 
     private void initializeValues() {

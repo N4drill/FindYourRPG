@@ -163,6 +163,7 @@
             android:layout_marginStart="167dp"
             android:layout_marginEnd="169dp"
             android:visibility="invisible"
+            android:elevation="12dp"
             app:layout_constraintBottom_toTopOf="@+id/login_button_card"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.487"
