@@ -113,4 +113,31 @@ public abstract class TextFormat {
         return "" + String.valueOf(distance) + context.getApplicationContext().getString(R.string.distance_unit);
     }
 
+
+    public static String getEventDateString(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int min = calendar.get(Calendar.MINUTE);
+
+        String monthString = month < 10 ? "0" + month : String.valueOf(month);
+        String dayString = day < 10 ? "0" + day : String.valueOf(day);
+        String hourString = hour < 10 ? "0" + hour : String.valueOf(hour);
+        String minString = min < 10 ? "0" + min : String.valueOf(min);
+
+        return ""
+                + dayString
+                + "."
+                + monthString
+                + "."
+                + calendar.get(Calendar.YEAR)
+                + ",  "
+                + hourString
+                + ":"
+                + minString;
+    }
+
 }

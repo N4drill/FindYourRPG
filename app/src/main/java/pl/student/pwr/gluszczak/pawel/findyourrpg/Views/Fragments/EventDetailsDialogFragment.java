@@ -28,6 +28,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.UserClient;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ExpierienceParser.expierienceNameParserLongToShort;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.getEventDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.playersNeededLeft;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateAverage;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserAverageAsGM;
@@ -181,7 +182,7 @@ public class EventDetailsDialogFragment extends AppCompatDialogFragment {
     private void updateUI(Event event) {
         mDescription.setText(event.getDescription());
         mSystemImage.setImageResource(mSystemImagesMap.getImageForSystem(event.getSystem()));
-        mDate.setText(event.getDate().toString());
+        mDate.setText(getEventDateString(event.getDate()));
         mSystem.setText(event.getSystem());
         mMinExp.setText(expierienceNameParserLongToShort(getActivity(), event.getMin_exp()));
         mRecExp.setText(expierienceNameParserLongToShort(getActivity(), event.getRec_exp()));

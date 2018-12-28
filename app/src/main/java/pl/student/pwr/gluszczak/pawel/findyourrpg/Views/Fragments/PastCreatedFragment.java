@@ -33,6 +33,7 @@ import pl.student.pwr.gluszczak.pawel.findyourrpg.Singletons.SystemImagesMap;
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.ToastMaker;
 
 import static android.support.constraint.Constraints.TAG;
+import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.getEventDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserAverageAsGM;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.UserUtils.calculateUserGames;
 
@@ -107,7 +108,7 @@ public class PastCreatedFragment extends Fragment {
 
     private void initializeValues() {
         mTitle.setText(event.getTitle());
-        mDate.setText(event.getDate().toString());
+        mDate.setText(getEventDateString(event.getDate()));
         mMasterName.setText(event.getGame_maser().getUsername());
         mMasterGames.setText(String.valueOf(calculateUserGames(event.getGame_maser())));
         mSysImage.setImageResource(mSystemImagesMap.getImageForSystem(event.getSystem()));

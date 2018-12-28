@@ -120,7 +120,16 @@ public class ProfileFragment extends BaseFragmentCreator {
                 mMRatingBar.setRating(mAverage);
                 Log.d(TAG, "updateProfileInformation: master rating bar set");
                 //Set overall rank
-                mOverallRating.setRating((pAverage + mAverage) / 2);
+                if (pAverage != 0f && mAverage != 0f) {
+                    mOverallRating.setRating((pAverage + mAverage) / 2);
+                } else if (pAverage != 0f && mAverage == 0f) {
+                    mOverallRating.setRating(pAverage);
+                } else if (mAverage != 0f && pAverage == 0f) {
+                    mOverallRating.setRating(mAverage);
+                } else {
+                    mOverallRating.setRating(0f);
+                }
+
                 Log.d(TAG, "updateProfileInformation: overall rating bar set");
 
 
