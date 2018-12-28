@@ -37,7 +37,13 @@ public abstract class TextFormat {
     public static String dateToDateString(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        return "" + (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        String dayString = String.valueOf(day);
+        //Fix date converting
+        //String monthString = month == 0 ? "12" : String.valueOf(month);
+        String monthString = String.valueOf(month);
+        return "" + dayString + "." + monthString;
     }
 
 
@@ -49,7 +55,7 @@ public abstract class TextFormat {
      * @return
      */
     public static String hourMinToString(int hourI, int min) {
-        int hour = hourI + 1;
+        int hour = hourI;
         StringBuilder builder = new StringBuilder();
         builder.append(hour < 10 ? "0" + hour : hour);
         builder.append(":");

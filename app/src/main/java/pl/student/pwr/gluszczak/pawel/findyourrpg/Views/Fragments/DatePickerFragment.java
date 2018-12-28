@@ -62,7 +62,7 @@ public class DatePickerFragment extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int year = mDatePicker.getYear();
-                        int month = mDatePicker.getMonth() + 1;
+                        int month = mDatePicker.getMonth();
                         int day = mDatePicker.getDayOfMonth();
                         Date date = new GregorianCalendar(year, month, day).getTime();
                         sendResult(Activity.RESULT_OK, date);

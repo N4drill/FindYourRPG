@@ -41,7 +41,7 @@
     <include
         android:id="@+id/game_summary_game_master"
         layout="@layout/row_event_player"
-        android:layout_width="395dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"

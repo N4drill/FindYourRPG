@@ -47,7 +47,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import pl.student.pwr.gluszczak.pawel.findyourrpg.Enums.ExpierienceLevelMap;
@@ -68,10 +70,8 @@ import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAP_LAY
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.MAP_LAYOUT_STATE_EXPANDED;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_DATE;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.Constants.REQUEST_EVENT;
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.LatLngParser.calculateDistance;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToDateString;
 import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.dateToTimeString;
-import static pl.student.pwr.gluszczak.pawel.findyourrpg.Tools.TextFormat.getDistanceString;
 
 public class LookingForGameFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, View.OnClickListener {
 
@@ -86,10 +86,10 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private ImageButton mExpandButton;
 
     private Spinner mSystemSpinner, mExpSpinner;
-    private Button mFilterButton, mDistanceLeftButton, mDistanceRightButton, mResetButton;
-    private TextView mDistanceText, mDateLowText, mDateUpText, mCounter;
-    private CardView mDistanceLeftCard, mDistanceRightCard, mDateLow, mDateUp;
-    private Switch mSystemSwitch, mExpSwitch, mDistanceSwitch, mDateSwitch;
+    private Button mFilterButton, mResetButton;
+    private TextView mDateLowText, mDateUpText, mCounter;
+    private CardView mDateLow, mDateUp;
+    private Switch mSystemSwitch, mExpSwitch, mDateSwitch;
     private ProgressBar mProgressBar, mProgressBarMap;
 
 
@@ -115,10 +115,10 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private boolean mLowDateClicked = false;
 
     //Init Filter Values
-    private double mCurrentDistance = 0.0;
     private String mCurrentGame;
     private Date mCurrentLowDate;
     private Date mCurrentUpDate;
+    private Date mToday;
 
 
     private void initGoogleMap(Bundle savedInstanceState) {
@@ -164,8 +164,11 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     }
 
     private void initDefaultValues() {
+        mToday = new Date();
         mCurrentLowDate = new Date();
         mCurrentUpDate = new Date();
+        Calendar tempCalendar = Calendar.getInstance();
+        tempCalendar.setTime(mCurrentLowDate);
         mCurrentGame = getString(R.string.system_default);
     }
 
@@ -173,9 +176,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         mSystemSpinner = view.findViewById(R.id.filter_system);
         mExpSpinner = view.findViewById(R.id.filter_exp);
         mFilterButton = view.findViewById(R.id.filter_button);
-        mDistanceText = view.findViewById(R.id.filter_distance_text);
-        mDistanceLeftCard = view.findViewById(R.id.filter_distance_left_card);
-        mDistanceRightCard = view.findViewById(R.id.filter_distance_right_card);
         mDateLowText = view.findViewById(R.id.filter_date_low_text);
         mDateUpText = view.findViewById(R.id.filter_date_up_text);
         mDateLow = view.findViewById(R.id.filter_date_low);
@@ -183,15 +183,10 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         mDateSwitch = view.findViewById(R.id.filter_switch_date);
         mExpSwitch = view.findViewById(R.id.filter_switch_exp);
         mSystemSwitch = view.findViewById(R.id.filter_switch_systems);
-        mDistanceSwitch = view.findViewById(R.id.filter_switch_distance);
         mProgressBar = view.findViewById(R.id.filter_progressbar);
         mProgressBarMap = view.findViewById(R.id.lfg_progressbar);
-        mDistanceLeftButton = view.findViewById(R.id.filter_distance_left_button);
-        mDistanceRightButton = view.findViewById(R.id.filter_distance_right_button);
         mResetButton = view.findViewById(R.id.filter_reset_button);
         mCounter = view.findViewById(R.id.lfg_counter);
-
-
         initSpinners();
 
         initFormWithDefaultData();
@@ -217,8 +212,10 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     }
 
     private void initFormWithDefaultData() {
-        updateDateLowText(mCurrentLowDate);
-        updateDateUpText(mCurrentUpDate);
+        updateDateLowText(mToday);
+        updateDateUpText(mToday);
+        mExpSpinner.setSelection(0);
+        mSystemSpinner.setSelection(0);
     }
 
     private void updateDateLowText(Date date) {
@@ -581,27 +578,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     }
 
     private void initListeners() {
-        mDistanceRightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentDistance < 50) {
-                    mCurrentDistance++;
-                    updateDistanceText(mCurrentDistance);
-                }
-            }
-        });
-
-        mDistanceLeftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentDistance > 0) {
-                    mCurrentDistance--;
-                    updateDistanceText(mCurrentDistance);
-                }
-
-            }
-        });
-
         mDateLow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -635,13 +611,13 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                 mFilteredEvents.clear();
                 updateClusters(mAllEvents);
                 resetFiltersSwitches();
+                initFormWithDefaultData();
             }
         });
     }
 
     private void resetFiltersSwitches() {
         mSystemSwitch.setChecked(false);
-        mDistanceSwitch.setChecked(false);
         mExpSwitch.setChecked(false);
         mDateSwitch.setChecked(false);
     }
@@ -654,21 +630,20 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
                 Log.d(TAG, "onClick: FILTERING!");
                 boolean system = mSystemSwitch.isChecked();
                 boolean exp = mExpSwitch.isChecked();
-                boolean distance = mDistanceSwitch.isChecked();
                 boolean date = mDateSwitch.isChecked();
                 boolean validation = false;
 
 
-                if (!system && !exp && !distance && !date) {
+                if (!system && !exp && !date) {
                     ToastMaker.shortToast(getActivity(), "You need to choose at least one filter");
                 } else {
-                    validation = checkValidation(system, exp, distance, date);
+                    validation = checkValidation(system, exp, date);
                 }
 
                 //Validation completed
                 if (validation) {
                     Log.d(TAG, "onClick: Validation success");
-                    mFilteredEvents = filterEvents(mAllEvents, system, exp, distance, date);
+                    mFilteredEvents = filterEvents(mAllEvents, system, exp, date);
                     mIsFiltered = true;
 
                     updateClusters(mFilteredEvents);
@@ -695,7 +670,7 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         };
     }
 
-    private boolean checkValidation(boolean system, boolean exp, boolean distance, boolean date) {
+    private boolean checkValidation(boolean system, boolean exp, boolean date) {
         if (system) {
             if (!checkSystemSpinnerOK()) {
                 ToastMaker.shortToast(getActivity(), "Choose system to filter");
@@ -705,12 +680,6 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
         if (exp) {
             if (!checkExpSpinnerOK()) {
                 ToastMaker.shortToast(getActivity(), "Choose min exp to filter");
-                return false;
-            }
-        }
-        if (distance) {
-            if (!checkDistanceOK()) {
-                ToastMaker.shortToast(getActivity(), "Choose distance to filter");
                 return false;
             }
         }
@@ -728,22 +697,35 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private boolean isDateOK() {
         Date date = new Date();
 
-        if (mCurrentLowDate.getTime() < date.getTime() || mCurrentUpDate.getTime() < date.getTime())
-            if (!isToday(mCurrentLowDate) || !isToday(mCurrentUpDate)) {
+        if (mCurrentLowDate.getTime() < date.getTime()) {
+            if (!isToday(mCurrentLowDate)) {
                 return false;
             }
-        return mCurrentUpDate.getTime() >= mCurrentLowDate.getTime();
-    }
+        }
 
-    private boolean checkDistanceOK() {
-        return mCurrentDistance > 0 && mCurrentDistance < 50;
+        if (mCurrentUpDate.getTime() < date.getTime()) {
+            if (!isToday(mCurrentUpDate)) {
+                return false;
+            }
+        }
+
+        Calendar lowCalendar = new GregorianCalendar();
+        Calendar upCalendar = new GregorianCalendar();
+        lowCalendar.setTime(mCurrentLowDate);
+        upCalendar.setTime(mCurrentUpDate);
+
+        if (lowCalendar.get(Calendar.DAY_OF_MONTH) == upCalendar.get(Calendar.DAY_OF_MONTH)) {
+            return true;
+        }
+
+        return mCurrentLowDate.getTime() <= mCurrentUpDate.getTime();
     }
 
     private boolean checkExpSpinnerOK() {
         return !mExpSpinner.getSelectedItem().toString().equals(getString(R.string.header_exp_levels));
     }
 
-    private ArrayList<Event> filterEvents(List<Event> events, boolean bySystem, boolean byExp, boolean byDistance, boolean byDate) {
+    private ArrayList<Event> filterEvents(List<Event> events, boolean bySystem, boolean byExp, boolean byDate) {
         Log.d(TAG, "filterEvents: Events size before filter: " + events.size());
         ArrayList<Event> newEventList = new ArrayList<>(events);
         ArrayList<Event> eventsToRemove = new ArrayList<>();
@@ -769,28 +751,21 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
             }
         }
 
-        //TODO: Naprawic filtrowanie
-//        if (byDistance) {
-//            //sqrt((x2-x1)^2 + (y2-y1)^2)
-//            //lat deg = 110.574 km
-//            //long deg = 111.320*cos(lat) km
-//            double chosenDistance = mCurrentDistance;
-//            for (Event event : events) {
-//                double distance = calculateDistance(event.getLocalization().getLatitude(),
-//                        mUserPosition.getGeoPoint().getLatitude(),
-//                        event.getLocalization().getLongitude(),
-//                        mUserPosition.getGeoPoint().getLongitude()
-//                );
-//
-//                if (distance < chosenDistance) {
-//                    eventsToRemove.add(event);
-//                }
-//            }
-//        }
         if (byDate) {
+            Calendar lowCalendar = new GregorianCalendar();
+            Calendar upCalendar = new GregorianCalendar();
+            Calendar eventCalendar = new GregorianCalendar();
+            lowCalendar.setTime(mCurrentLowDate);
+            upCalendar.setTime(mCurrentUpDate);
+
+            lowCalendar.set(Calendar.HOUR_OF_DAY, 0);
+            lowCalendar.set(Calendar.MINUTE, 0);
+            upCalendar.set(Calendar.HOUR_OF_DAY, 24);
+            upCalendar.set(Calendar.MINUTE, 59);
+
             for (Event event : newEventList) {
-                if (!(event.getDate().getTime() > mCurrentLowDate.getTime() && event.getDate().getTime() < mCurrentUpDate.getTime())) {
-                    //if (compareDates(mCurrentLowDate, event.getDate()) >= 0 && compareDates(mCurrentUpDate, event.getDate()) <= 0) {  //TODO: Method to repair
+                eventCalendar.setTime(event.getDate());
+                if (eventCalendar.after(upCalendar) || eventCalendar.before(lowCalendar)) {
                     eventsToRemove.add(event);
                 }
             }
@@ -804,10 +779,5 @@ public class LookingForGameFragment extends Fragment implements OnMapReadyCallba
     private boolean checkSystemSpinnerOK() {
         return !mSystemSpinner.getSelectedItem().toString().equals(getString(R.string.header_game_systems));
     }
-
-    private void updateDistanceText(double distance) {
-        mDistanceText.setText(getDistanceString(getActivity(), distance));
-    }
-
 
 }

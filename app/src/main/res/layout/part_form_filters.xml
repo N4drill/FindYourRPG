@@ -23,9 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Reset"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filter_button" />
@@ -53,74 +51,18 @@
         app:layout_constraintTop_toBottomOf="@+id/filter_system" />
 
 
-    <TextView
-        android:id="@+id/filter_distance_text"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="center"
-        android:text="0 km"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@+id/filter_distance_right_card"
-        app:layout_constraintStart_toEndOf="@+id/filter_distance_left_card"
-        app:layout_constraintTop_toBottomOf="@+id/filter_exp" />
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/filter_distance_left_card"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        app:cardBackgroundColor="@color/filter_button_color"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/filter_distance_text"
-        app:layout_constraintStart_toEndOf="@+id/filter_switch_distance"
-        app:layout_constraintTop_toTopOf="@+id/filter_distance_text">
-
-        <Button
-            android:id="@+id/filter_distance_left_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:text="-" />
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/filter_distance_right_card"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        app:cardBackgroundColor="@color/filter_button_color"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/filter_distance_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/filter_distance_text">
-
-        <Button
-            android:id="@+id/filter_distance_right_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:text="+" />
-    </android.support.v7.widget.CardView>
-
-
     <LinearLayout
         android:id="@+id/datescontainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         android:weightSum="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/filter_switch_date"
-        app:layout_constraintTop_toBottomOf="@+id/filter_distance_text">
+        app:layout_constraintTop_toBottomOf="@+id/filter_exp">
 
         <android.support.v7.widget.CardView
             android:id="@+id/filter_date_low"
@@ -154,15 +96,6 @@
                 android:textSize="24sp" />
         </android.support.v7.widget.CardView>
     </LinearLayout>
-
-    <Switch
-        android:id="@+id/filter_switch_distance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/filter_distance_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/filter_distance_text" />
 
     <Switch
         android:id="@+id/filter_switch_exp"
